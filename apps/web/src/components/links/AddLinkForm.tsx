@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from '@web/components/ui/dialog';
 import {DialogDescription} from '@radix-ui/react-dialog';
+import {Plus} from 'lucide-react';
 
 export function AddLinkForm() {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,8 +74,8 @@ export function AddLinkForm() {
     <div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button className='rounded p-4' onClick={() => setIsOpen(true)}>
-            Add a new link
+          <Button size="icon" className='rounded-full w-12 h-12' onClick={() => setIsOpen(true)}>
+            <Plus className="h-5 w-5" />
           </Button>
         </DialogTrigger>
 
