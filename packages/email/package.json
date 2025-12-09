@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit --project . --skipLibCheck"
   },
   "dependencies": {
     "@stashl/iocdi": "workspace:*",

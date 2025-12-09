@@ -2,7 +2,7 @@ import * as Linking from 'expo-linking';
 import * as IntentLauncher from 'expo-intent-launcher';
 import {Platform} from 'react-native';
 import {fetchPageMetadata, isValidUrl, normalizeUrl} from '@stashl/metadata';
-import {createLink} from './api';
+import {createLinkDirect} from './links';
 import type {CreateLinkInput} from '@stashl/domain';
 
 export interface SharedLinkData {
@@ -155,7 +155,7 @@ export class ShareHandler {
         description: metadata.description,
       };
 
-      await createLink(linkInput);
+      await createLinkDirect(linkInput);
 
       console.log('Successfully saved shared link:', metadata.title);
     } catch (error) {

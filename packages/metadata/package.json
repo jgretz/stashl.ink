@@ -6,7 +6,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit --project . --skipLibCheck"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

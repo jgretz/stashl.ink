@@ -73,7 +73,7 @@ export function UsersTable() {
 
   const confirmDeleteUser = () => {
     if (userToDelete) {
-      deleteUserMutation.mutate(userToDelete._id);
+      deleteUserMutation.mutate(userToDelete.id);
     }
   };
 
@@ -122,8 +122,8 @@ export function UsersTable() {
             </tr>
           </thead>
           <tbody className='bg-white divide-y divide-gray-200'>
-            {users?.map((user: User) => (
-              <tr key={user._id} className='hover:bg-gray-50'>
+            {users?.users?.map((user: User) => (
+              <tr key={user.id} className='hover:bg-gray-50'>
                 <td className='px-6 py-4 whitespace-nowrap'>
                   <div className='text-sm font-medium text-gray-900'>{user.name}</div>
                 </td>
@@ -155,7 +155,7 @@ export function UsersTable() {
           </tbody>
         </table>
 
-        {users?.length === 0 && (
+        {users?.users?.length === 0 && (
           <div className='text-center py-8'>
             <p className='text-gray-500'>No users found.</p>
           </div>

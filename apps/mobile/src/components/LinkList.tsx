@@ -1,8 +1,6 @@
 import React from 'react';
 import {FlatList, View, Text, StyleSheet, ActivityIndicator, RefreshControl} from 'react-native';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import {getLinks, deleteLink, type LinksResponse} from '../services';
-import type {Link} from '@stashl/domain';
+import {useLinks, useDeleteLink, type Link} from '../services';
 import {LinkCard} from './LinkCard';
 import {colors} from '../theme';
 
@@ -15,7 +13,7 @@ function LoadingState() {
   );
 }
 
-function ErrorState({isRefreshing, onRefresh}: {isRefreshing: boolean; onRefresh: () => void}) {
+function ErrorState({isRefreshing, onRefresh, error}: {isRefreshing: boolean; onRefresh: () => void; error: string}) {
   return (
     <FlatList
       data={[]}
@@ -32,7 +30,11 @@ function ErrorState({isRefreshing, onRefresh}: {isRefreshing: boolean; onRefresh
         />
       }
       ListEmptyComponent={
-        <Text style={styles.errorText}>Failed to load links. Pull down to retry.</Text>
+        <View>
+          <Text style={styles.errorText}>Failed to load links</Text>
+          <Text style={styles.errorSubtext}>{error}</Text>
+          <Text style={styles.errorSubtext}>Pull down to retry.</Text>
+        </View>
       }
     />
   );
@@ -70,9 +72,9 @@ function LinksList({links, onDelete, isRefreshing, onRefresh}: LinksListProps) {
   return (
     <FlatList
       data={links}
-      keyExtractor={(item) => item._id?.toString() || ''}
+      keyExtractor={(item) => item.id}
       renderItem={({item}) => (
-        <LinkCard link={item} onDelete={() => onDelete(item._id?.toString() || '')} />
+        <LinkCard link={item} onDelete={() => onDelete(item.id)} />
       )}
       style={styles.list}
       showsVerticalScrollIndicator={false}
@@ -90,19 +92,8 @@ function LinksList({links, onDelete, isRefreshing, onRefresh}: LinksListProps) {
 }
 
 export function LinkList() {
-  const queryClient = useQueryClient();
-
-  const {data, isLoading, error, refetch, isFetching} = useQuery<LinksResponse>({
-    queryKey: ['links'],
-    queryFn: getLinks,
-  });
-
-  const deleteLinkMutation = useMutation({
-    mutationFn: (id: string) => deleteLink(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['links']});
-    },
-  });
+  const {data, isLoading, error, refetch, isFetching} = useLinks();
+  const deleteLinkMutation = useDeleteLink();
 
   const handleDelete = (linkId: string) => {
     deleteLinkMutation.mutate(linkId);
@@ -117,7 +108,13 @@ export function LinkList() {
   }
 
   if (error) {
-    return <ErrorState isRefreshing={isFetching} onRefresh={handleRefresh} />;
+    return (
+      <ErrorState 
+        isRefreshing={isFetching} 
+        onRefresh={handleRefresh} 
+        error={error.message || 'Unknown error'}
+      />
+    );
   }
 
   const links = data?.links || [];
@@ -153,6 +150,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.destructive,
     textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  errorSubtext: {
+    fontSize: 14,
+    color: colors.mutedForeground,
+    textAlign: 'center',
+    marginTop: 4,
   },
   emptyText: {
     fontSize: 16,

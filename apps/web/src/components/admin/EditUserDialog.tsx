@@ -34,7 +34,7 @@ export function EditUserDialog({
         if (value.name !== user.name) updateData.name = value.name;
         if (value.password) updateData.password = value.password;
 
-        onSubmit(user._id, updateData);
+        onSubmit(user.id, updateData);
       }
     },
   });

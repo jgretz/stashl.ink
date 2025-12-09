@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.crate.links'
+    namespace 'com.stashl.links'
     defaultConfig {
-        applicationId 'com.crate.links'
+        applicationId 'com.stashl.links'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
