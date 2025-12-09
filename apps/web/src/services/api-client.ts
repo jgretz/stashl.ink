@@ -9,6 +9,8 @@ function getApiUrl(): string {
     return envApiUrl;
   }
 
+  console.log(`NODE_ENV: ${nodeEnv} | VITE_API_URL ${envApiUrl}`);
+
   // Use pattern matching for environment scenarios
   return match(nodeEnv)
     .with('development', () => 'http://localhost:3001/api')
@@ -40,14 +42,11 @@ export class ApiClient {
     this.authToken = token;
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {},
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string> || {}),
+      ...((options.headers as Record<string, string>) || {}),
     };
 
     if (this.authToken) {

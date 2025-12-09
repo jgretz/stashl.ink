@@ -68,7 +68,7 @@
       "bundler": "metro"
     },
     "extra": {
-      "apiUrl": "https://stashl-api.fly.dev/graphql"
+      "apiUrl": "https://stashl-api.fly.dev/api"
     }
   }
 }

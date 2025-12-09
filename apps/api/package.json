@@ -3,11 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "dev:graphql": "bun run --hot src/index-graphql.ts",
     "build": "bun build src/index.ts --outdir dist",
-    "build:graphql": "bun build src/index-graphql.ts --outdir dist",
     "start": "bun run dist/index.js",
-    "start:graphql": "bun run dist/index-graphql.js",
     "type-check": "tsc --noEmit --project . --skipLibCheck",
     "clean": "rm -rf dist"
   },

@@ -10,10 +10,10 @@ Stashl.ink is a link management application that allows users to organize and ma
 
 This is a monorepo using Bun workspaces with the following structure:
 
-- `apps/api/` - Hono-based GraphQL API server using MongoDB
-- `apps/web/` - TanStack Start React application with Tailwind CSS
+- `apps/api/` - Hono-based REST API server using PostgreSQL
+- `apps/web/` - TanStack Start React application with Tailwind CSS and shadcn/ui sidebar
 - `apps/mobile/` - React Native app with Expo for cross-platform mobile
-- `packages/domain/` - Domain business logic and MongoDB repositories
+- `packages/domain/` - Domain business logic with Drizzle ORM and PostgreSQL
 - `packages/iocdi/` - Custom IoC/DI container for functional architecture
 - `packages/assets/` - Shared assets including the Stashl.ink mascot logo
 
@@ -55,10 +55,10 @@ bun test packages/iocdi/tests/
 
 ### API (`apps/api/`)
 
-- **Framework**: Hono with GraphQL Yoga
-- **Database**: MongoDB for data persistence
-- **Schema**: GraphQL schema assembled from modular type definitions and resolvers
-- **Authentication**: JWT-based auth with context injection
+- **Framework**: Hono REST API
+- **Database**: PostgreSQL with Drizzle ORM
+- **Schema**: REST endpoints with proper HTTP status codes and JSON responses
+- **Authentication**: JWT-based auth with middleware
 - **Dependency Injection**: Uses custom `@stashl/iocdi` for functional DI
 - **Port**: 3001
 
@@ -67,9 +67,9 @@ bun test packages/iocdi/tests/
 - **Framework**: TanStack Start (React-based)
 - **Routing**: TanStack Router with file-based routing in `src/routes/`
 - **State Management**: TanStack Query for server state
-- **Styling**: Tailwind CSS v4 with Radix UI components
-- **GraphQL Client**: graphql-request
-- **UI Components**: Custom components in `src/components/ui/` built on Radix primitives
+- **Styling**: Tailwind CSS v4 with shadcn/ui components and sidebar navigation
+- **API Client**: REST API client with TanStack Query
+- **UI Components**: shadcn/ui components built on Radix primitives with custom sidebar layout
 
 ### Mobile App (`apps/mobile/`)
 
@@ -83,7 +83,7 @@ bun test packages/iocdi/tests/
 ### Domain Package (`packages/domain/`)
 
 - **Architecture**: Functional domain layer with service-repository pattern
-- **Database**: MongoDB with custom repository implementations
+- **Database**: PostgreSQL with Drizzle ORM
 - **Services**: Business logic for links and users (CRUD operations)
 - **Dependency Injection**: Integrated with `@stashl/iocdi` container
 
@@ -98,10 +98,10 @@ bun test packages/iocdi/tests/
 
 - **Runtime**: Bun (package manager and runtime)
 - **Language**: TypeScript with strict configuration
-- **API**: Hono + GraphQL Yoga + MongoDB
-- **Frontend**: React 19 + TanStack Start + TanStack Query + Tailwind CSS v4
+- **API**: Hono REST API + PostgreSQL + Drizzle ORM
+- **Frontend**: React 19 + TanStack Start + TanStack Query + Tailwind CSS v4 + shadcn/ui
 - **Mobile**: React Native 0.79.5 + Expo 53 + TanStack Query
-- **Database**: MongoDB with custom repository pattern
+- **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: JWT tokens with secure storage
 
 ## Design Theme
