@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Alert, Linking} from 'react-native';
-import type {Link} from '@stashl/domain';
+import type {Link} from '../services';
 import {colors} from '../theme';
 
 interface LinkCardProps {

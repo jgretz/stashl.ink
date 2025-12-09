@@ -1,11 +1,11 @@
 import * as SecureStore from 'expo-secure-store';
-import {config} from '../config';
+import {apiClient} from './api-client';
 
 const AUTH_TOKEN_KEY = 'stashl_auth_token';
 const USER_KEY = 'stashl_user';
 
 export interface User {
-  _id: string;
+  id: string;
   email: string;
   name: string;
   createdAt: string;
@@ -17,66 +17,35 @@ export interface LoginInput {
   password: string;
 }
 
+export interface RegisterInput {
+  email: string;
+  name: string;
+  password: string;
+}
+
 export interface AuthResponse {
   token: string;
   user: User;
 }
 
-async function graphqlRequest(query: string, variables?: any, token?: string) {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const response = await fetch(config.apiUrl, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const result = await response.json();
-
-  if (result.errors) {
-    throw new Error(result.errors[0]?.message || 'GraphQL error');
-  }
-
-  return result.data;
-}
-
 export async function login(input: LoginInput): Promise<AuthResponse> {
-  const mutation = `
-    mutation Login($input: LoginInput!) {
-      login(input: $input) {
-        token
-        user {
-          _id
-          email
-          name
-          createdAt
-          updatedAt
-        }
-      }
-    }
-  `;
-
-  const data = await graphqlRequest(mutation, {input});
-  const authResponse = data.login;
+  const response = await apiClient.post<AuthResponse>('/auth/login', input);
 
   // Store token and user in SecureStore
-  await SecureStore.setItemAsync(AUTH_TOKEN_KEY, authResponse.token);
-  await SecureStore.setItemAsync(USER_KEY, JSON.stringify(authResponse.user));
+  await SecureStore.setItemAsync(AUTH_TOKEN_KEY, response.token);
+  await SecureStore.setItemAsync(USER_KEY, JSON.stringify(response.user));
 
-  return authResponse;
+  return response;
+}
+
+export async function register(input: RegisterInput): Promise<AuthResponse> {
+  const response = await apiClient.post<AuthResponse>('/auth/register', input);
+
+  // Store token and user in SecureStore
+  await SecureStore.setItemAsync(AUTH_TOKEN_KEY, response.token);
+  await SecureStore.setItemAsync(USER_KEY, JSON.stringify(response.user));
+
+  return response;
 }
 
 export async function logout(): Promise<void> {
@@ -98,15 +67,24 @@ export async function isAuthenticated(): Promise<boolean> {
   return token !== null;
 }
 
-export async function getAuthHeaders(): Promise<Record<string, string>> {
-  const token = await getToken();
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
+// Password Reset Functions
+export interface PasswordResetRequestInput {
+  email: string;
+}
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+export interface PasswordResetConfirmInput {
+  token: string;
+  newPassword: string;
+}
 
-  return headers;
+export async function requestPasswordReset(input: PasswordResetRequestInput): Promise<{message: string}> {
+  return apiClient.post('/auth/reset-password/request', input);
+}
+
+export async function validateResetToken(token: string): Promise<{message: string; userId: string}> {
+  return apiClient.post('/auth/reset-password/validate', {token});
+}
+
+export async function confirmPasswordReset(input: PasswordResetConfirmInput): Promise<{message: string}> {
+  return apiClient.post('/auth/reset-password/confirm', input);
 }

@@ -1,13 +1,7 @@
-import {ObjectId} from 'mongodb';
+import type {User as DbUser, Link as DbLink} from './db/schema';
 
-export interface Link {
-  _id?: ObjectId;
-  url: string;
-  title: string;
-  description?: string;
-  dateAdded: Date;
-  userId: ObjectId;
-}
+export type User = DbUser;
+export type Link = DbLink;
 
 export interface CreateLinkInput {
   url: string;
@@ -28,17 +22,6 @@ export interface LinkRepository {
   findAll(): Promise<Link[]>;
   update(id: string, input: UpdateLinkInput): Promise<Link | null>;
   delete(id: string): Promise<boolean>;
-}
-
-export interface User {
-  _id?: ObjectId;
-  email: string;
-  name: string;
-  password: string;
-  createdAt: Date;
-  updatedAt: Date;
-  resetToken?: string;
-  resetTokenExpiry?: Date;
 }
 
 export interface CreateUserInput {

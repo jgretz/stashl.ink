@@ -25,3 +25,6 @@ expo-env.d.ts
 
 # TypeScript
 *.tsbuildinfo
+
+# Local working files
+CLAUDE-WORKING.md

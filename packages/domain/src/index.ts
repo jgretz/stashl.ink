@@ -1,8 +1,14 @@
 // Core types
 export * from './types';
 
-// Functional exports
-export * from './initializeDomain';
-export * from './links';
-export * from './users';
+// Database
+export * from './db';
+
+// Repositories
+export * from './repositories';
+
+// Services
+export * from './services';
+
+// Utilities
 export * from './utils';

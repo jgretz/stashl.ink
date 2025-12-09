@@ -20,15 +20,15 @@ function ResetPassword() {
 
   const validationQuery = useQuery({
     queryKey: ['validateResetToken', token, email],
-    queryFn: () => validateResetToken(token, email),
+    queryFn: () => validateResetToken({data: {token}}),
     enabled: !!(token && email),
     retry: false,
   });
 
   const resetMutation = useMutation({
-    mutationFn: ({newPassword}: {newPassword: string}) => resetPassword(token, email, newPassword),
+    mutationFn: ({newPassword}: {newPassword: string}) => resetPassword(token, newPassword),
     onSuccess: (data) => {
-      if (data.success) {
+      if (data.message) {
         navigate({
           to: '/login',
           search: {message: 'Password reset successfully. Please log in.'},
@@ -69,7 +69,7 @@ function ResetPassword() {
     );
   }
 
-  if (validationQuery.error || !validationQuery.data?.valid) {
+  if (validationQuery.error || !validationQuery.data?.userId) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
         <div className='max-w-md mx-auto p-8 text-center'>
@@ -174,7 +174,7 @@ function ResetPassword() {
               </p>
             )}
 
-            {resetMutation.data && !resetMutation.data.success && (
+            {resetMutation.data && !resetMutation.data.message && (
               <p className='text-red-600 text-sm mt-2 text-center'>{resetMutation.data.message}</p>
             )}
           </form>

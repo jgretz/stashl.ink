@@ -29,7 +29,7 @@ export function ResetPasswordDialog({open, onOpenChange}: ResetPasswordDialogPro
     onSubmit: async ({value}) => {
       if (!value.email) return;
       setEmail(value.email);
-      resetMutation.mutate(value.email);
+      resetMutation.mutate({data: {email: value.email}});
     },
   });
 

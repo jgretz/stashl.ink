@@ -17,6 +17,10 @@
     "lint": "bun run --filter=* lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "clean": "bun x -y rimraf -g **/bun.lock* **/node_modules",
+    "db:generate": "bun run --filter=@stashl/domain db:generate",
+    "db:migrate": "bun run --filter=@stashl/domain db:migrate",
+    "db:push": "bun run --filter=@stashl/domain db:push",
+    "db:studio": "bun run --filter=@stashl/domain db:studio",
     "deploy:api": "fly deploy --config ./deploy/api/fly.toml --dockerfile ./deploy/api/Dockerfile",
     "deploy:web": "fly deploy --config ./deploy/web/fly.toml --dockerfile ./deploy/web/Dockerfile"
   },

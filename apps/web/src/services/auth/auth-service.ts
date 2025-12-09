@@ -1,47 +1,58 @@
-import {graphqlClient} from '../graphql-client';
+import {apiClient} from '../api-client';
 import {createServerFn} from '@tanstack/react-start';
+import {confirmPasswordReset} from './password-reset-service';
 
-const LOGIN_MUTATION = `
-  mutation Login($input: LoginInput!) {
-    login(input: $input) {
-      token
-      user {
-        _id
-        email
-        name
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface AuthResponse {
   token: string;
-  user: {
-    _id: string;
-    email: string;
-    name: string;
-    createdAt: string;
-    updatedAt: string;
-  };
+  user: User;
+}
+
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export interface RegisterInput {
+  email: string;
+  name: string;
+  password: string;
+}
+
+export interface CreateUserInput {
+  email: string;
+  name: string;
+  password: string;
 }
 
 export const login = createServerFn({
   method: 'POST',
 })
-  .validator((data: {email: string; password: string}) => data)
+  .inputValidator((data: LoginInput) => data)
   .handler(async function ({data}) {
-    const response = await graphqlClient.request<{login: AuthResponse}>(LOGIN_MUTATION, {
-      input: data,
-    });
+    const response = await apiClient.post<AuthResponse>('/auth/login', data);
+    return response;
+  });
 
-    return response.login;
+export const register = createServerFn({
+  method: 'POST',
+})
+  .inputValidator((data: RegisterInput) => data)
+  .handler(async function ({data}) {
+    const response = await apiClient.post<AuthResponse>('/auth/register', data);
+    return response;
   });
 
 export function setAuthToken(token: string) {
   document.cookie = `auth-token=${token}; path=/; max-age=${30 * 24 * 60 * 60}; secure; samesite=strict`;
-  graphqlClient.setHeader('Authorization', `Bearer ${token}`);
+  apiClient.setAuthToken(token);
 }
 
 export function getAuthToken(): string | null {
@@ -60,7 +71,7 @@ export function clearAuthToken() {
   }
 
   document.cookie = 'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-  graphqlClient.setHeader('Authorization', '');
+  apiClient.setAuthToken(null);
 }
 
 export function isAuthenticated(): boolean {
@@ -71,9 +82,9 @@ export function isAuthenticated(): boolean {
   const token = getAuthToken();
   const authenticated = token !== null && token !== '' && token !== 'undefined';
 
-  // Ensure GraphQL client has the token set for subsequent requests
+  // Ensure API client has the token set for subsequent requests
   if (authenticated && token) {
-    graphqlClient.setHeader('Authorization', `Bearer ${token}`);
+    apiClient.setAuthToken(token);
   }
 
   return authenticated;
@@ -84,9 +95,18 @@ function onLoad() {
   if (typeof document !== 'undefined') {
     const token = getAuthToken();
     if (token && token !== '' && token !== 'undefined') {
-      graphqlClient.setHeader('Authorization', `Bearer ${token}`);
+      apiClient.setAuthToken(token);
     }
   }
 }
 
 onLoad();
+
+// Additional auth utility functions for compatibility
+export function requireAuth() {
+  return isAuthenticated();
+}
+
+export async function resetPassword(token: string, newPassword: string) {
+  return confirmPasswordReset({data: {token, newPassword}});
+}

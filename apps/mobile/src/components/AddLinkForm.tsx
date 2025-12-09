@@ -11,8 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {createLink} from '../services';
+import {useCreateLink} from '../services';
 import {fetchPageMetadata, normalizeUrl, isValidUrl} from '@stashl/metadata';
 import type {CreateLinkInput} from '@stashl/domain';
 import {colors} from '../theme';
@@ -27,19 +26,7 @@ export function AddLinkForm({visible, onClose}: AddLinkFormProps) {
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
   const [error, setError] = useState('');
 
-  const queryClient = useQueryClient();
-
-  const createLinkMutation = useMutation({
-    mutationFn: (input: CreateLinkInput) => createLink(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['links']});
-      handleClose();
-      Alert.alert('Success', 'Link added successfully!');
-    },
-    onError: () => {
-      Alert.alert('Error', 'Failed to add link. Please try again.');
-    },
-  });
+  const createLinkMutation = useCreateLink();
 
   const handleSubmit = async () => {
     if (!url.trim()) {

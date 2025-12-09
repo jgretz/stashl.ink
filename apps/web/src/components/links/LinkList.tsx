@@ -1,7 +1,5 @@
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {match} from 'ts-pattern';
-import {getLinks, deleteLink, type LinksResponse} from '@web/services';
-import type {Link} from '@stashl/domain-types';
+import {useLinks, useDeleteLink, type Link} from '@web/services';
 import {LinkCard} from './LinkCard';
 
 // Loading state component
@@ -14,10 +12,11 @@ function LoadingState() {
 }
 
 // Error state component
-function ErrorState() {
+function ErrorState({error}: {error: string}) {
   return (
     <div className='text-center py-12'>
-      <p className='text-red-600'>Failed to load links. Please try again.</p>
+      <p className='text-red-600'>Failed to load links: {error}</p>
+      <p className='text-gray-500 text-sm mt-2'>Please try again.</p>
     </div>
   );
 }
@@ -37,9 +36,9 @@ function LinksList({links, onDelete}: {links: Link[]; onDelete: (linkId: string)
     <div className='space-y-4'>
       {links.map((link) => (
         <LinkCard
-          key={link._id?.toString()}
+          key={link.id}
           link={link}
-          onDelete={() => onDelete(link._id?.toString() || '')}
+          onDelete={() => onDelete(link.id)}
         />
       ))}
     </div>
@@ -49,24 +48,13 @@ function LinksList({links, onDelete}: {links: Link[]; onDelete: (linkId: string)
 // Main state type
 type LinkListState =
   | {type: 'loading'}
-  | {type: 'error'}
+  | {type: 'error'; error: string}
   | {type: 'empty'}
   | {type: 'success'; links: Link[]};
 
 export function LinkList() {
-  const queryClient = useQueryClient();
-
-  const {data, isLoading, error} = useQuery<LinksResponse>({
-    queryKey: ['links'],
-    queryFn: getLinks,
-  });
-
-  const deleteLinkMutation = useMutation({
-    mutationFn: (id: string) => deleteLink(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['links']});
-    },
-  });
+  const {data, isLoading, error} = useLinks();
+  const deleteLinkMutation = useDeleteLink();
 
   const handleDelete = (linkId: string) => {
     deleteLinkMutation.mutate(linkId);
@@ -77,7 +65,7 @@ export function LinkList() {
     .with({isLoading: true}, () => ({type: 'loading'}) as const)
     .when(
       ({error}) => error !== null && error !== undefined,
-      () => ({type: 'error'}) as const,
+      ({error}) => ({type: 'error', error: error?.message || 'Unknown error'}) as const,
     )
     .when(
       ({data}) => !data?.links || data.links.length === 0,
@@ -88,7 +76,7 @@ export function LinkList() {
   // Render appropriate component based on state
   return match(state)
     .with({type: 'loading'}, () => <LoadingState />)
-    .with({type: 'error'}, () => <ErrorState />)
+    .with({type: 'error'}, ({error}) => <ErrorState error={error} />)
     .with({type: 'empty'}, () => <EmptyState />)
     .with({type: 'success'}, ({links}) => <LinksList links={links} onDelete={handleDelete} />)
     .exhaustive();

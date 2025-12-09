@@ -2,7 +2,7 @@ import {createFileRoute, useRouter} from '@tanstack/react-router';
 import {useEffect} from 'react';
 import {LinkList} from '@web/components/links/LinkList';
 import {AddLinkForm} from '@web/components/links/AddLinkForm';
-import {requireAuth, isAuthenticated} from '@web/services';
+import {requireAuth, isAuthenticated, clearAuthToken} from '@web/services';
 import {Mascot} from '@web/components/Mascot';
 
 export const Route = createFileRoute('/list')({
@@ -25,6 +25,13 @@ function List() {
     }
   }, [router]);
 
+  const handleLogout = () => {
+    clearAuthToken();
+    router.navigate({
+      to: '/login',
+    });
+  };
+
   // Don't render content during SSR to avoid hydration mismatch
   if (typeof document === 'undefined') {
     return null;
@@ -37,11 +44,17 @@ function List() {
 
   return (
     <div className='max-w-[800px] mx-auto'>
-      <div className='flex flex-row items-center justify-center py-5'>
+      <div className='flex flex-row items-center justify-between py-5'>
         <div className='flex items-center gap-3'>
           <Mascot />
           <h1 className='text-3xl font-bold'>Stashl.ink</h1>
         </div>
+        <button 
+          onClick={handleLogout}
+          className='px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors'
+        >
+          Logout
+        </button>
       </div>
 
       <div className='flex justify-end mb-4'>

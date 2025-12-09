@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 import {Platform} from 'react-native';
-import {match, P} from 'ts-pattern';
+import {match} from 'ts-pattern';
 
 export interface AppConfig {
   apiUrl: string;
@@ -17,10 +17,11 @@ function getApiUrl(): string {
     return envApiUrl;
   }
 
-  // special logic for local development scenarios
+  // Special logic for local development scenarios - REST API endpoints
   return match({isDev, platform})
-    .with({isDev: true, platform: 'android'}, () => 'http://10.0.2.2:3001/graphql')
-    .with({isDev: true}, () => 'http://localhost:3001/graphql')
+    .with({isDev: true, platform: 'android'}, () => 'http://10.0.2.2:3001/api')
+    .with({isDev: true}, () => 'http://localhost:3001/api')
+    .with({isDev: false}, () => 'https://stashl-api.fly.dev/api')
     .otherwise(() => {
       throw new Error(
         'API_URL must be configured via EXPO_PUBLIC_API_URL environment variable for production builds',

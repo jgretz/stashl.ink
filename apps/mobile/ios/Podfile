@@ -13,7 +13,7 @@ install! 'cocoapods',
 
 prepare_react_native_project!
 
-target 'Crate' do
+target 'Stashlink' do
   use_expo_modules!
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
@@ -72,7 +72,7 @@ target 'Crate' do
   end
 end
 
-target 'CrateShareExtension' do     
+target 'StashlinkShareExtension' do     
   exclude = ["expo-updates"]
   use_expo_modules!(exclude: exclude)
   
