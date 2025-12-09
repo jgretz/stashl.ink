@@ -8,6 +8,12 @@ primary_region = 'ord'
 
 [build]
 
+[env]
+  NODE_ENV = "production"
+  API_PORT = "3000"
+  PORT = "3000"
+  HOST = "0.0.0.0"
+
 [http_service]
   internal_port = 3000
   force_https = true

@@ -6,7 +6,16 @@
       "Bash(bun run:*)",
       "Bash(npx expo run:ios:*)",
       "Read(//Users/joshgretz/Development/Gretz/**)",
-      "Bash(npx expo prebuild:*)"
+      "Bash(npx expo prebuild:*)",
+      "Bash(docker run:*)",
+      "Bash(curl:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker build:*)",
+      "Bash(timeout:*)",
+      "Bash(gtimeout:*)",
+      "Bash(bun remove:*)"
     ],
     "deny": [],
     "ask": []

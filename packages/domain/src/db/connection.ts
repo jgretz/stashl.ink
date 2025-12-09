@@ -7,7 +7,6 @@ let sql: ReturnType<typeof postgres> | null = null;
 
 export function initializeDatabase(connectionString?: string): void {
   const databaseUrl = connectionString || process.env.DATABASE_URL;
-  
   if (!databaseUrl) {
     throw new Error('DATABASE_URL environment variable is not set');
   }
