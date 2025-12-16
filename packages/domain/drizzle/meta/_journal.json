@@ -8,6 +8,13 @@
       "when": 1765225121588,
       "tag": "0000_create-users-and-links-tables",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1765903792649,
+      "tag": "0001_military_sue_storm",
+      "breakpoints": true
     }
   ]
 }

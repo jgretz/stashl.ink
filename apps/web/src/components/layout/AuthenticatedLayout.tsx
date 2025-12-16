@@ -1,5 +1,5 @@
 import {useRouter} from '@tanstack/react-router';
-import {Link} from 'lucide-react';
+import {Link, Rss, BookOpen} from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -52,6 +52,22 @@ export function AuthenticatedLayout({children}: AuthenticatedLayoutProps) {
                       <a href='/list'>
                         <Link className='w-4 h-4' />
                         <span>Links</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <a href='/reader'>
+                        <BookOpen className='w-4 h-4' />
+                        <span>Reader</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <a href='/feeds'>
+                        <Rss className='w-4 h-4' />
+                        <span>Feeds</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

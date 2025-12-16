@@ -9,12 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReaderRouteImport } from './routes/reader'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ListRouteImport } from './routes/list'
+import { Route as FeedsRouteImport } from './routes/feeds'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 
+const ReaderRoute = ReaderRouteImport.update({
+  id: '/reader',
+  path: '/reader',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -23,6 +30,11 @@ const LoginRoute = LoginRouteImport.update({
 const ListRoute = ListRouteImport.update({
   id: '/list',
   path: '/list',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedsRoute = FeedsRouteImport.update({
+  id: '/feeds',
+  path: '/feeds',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -43,50 +55,81 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/feeds': typeof FeedsRoute
   '/list': typeof ListRoute
   '/login': typeof LoginRoute
+  '/reader': typeof ReaderRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/feeds': typeof FeedsRoute
   '/list': typeof ListRoute
   '/login': typeof LoginRoute
+  '/reader': typeof ReaderRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/feeds': typeof FeedsRoute
   '/list': typeof ListRoute
   '/login': typeof LoginRoute
+  '/reader': typeof ReaderRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/list' | '/login' | '/admin/users' | '/auth/reset-password'
+  fullPaths:
+    | '/'
+    | '/feeds'
+    | '/list'
+    | '/login'
+    | '/reader'
+    | '/admin/users'
+    | '/auth/reset-password'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/list' | '/login' | '/admin/users' | '/auth/reset-password'
+  to:
+    | '/'
+    | '/feeds'
+    | '/list'
+    | '/login'
+    | '/reader'
+    | '/admin/users'
+    | '/auth/reset-password'
   id:
     | '__root__'
     | '/'
+    | '/feeds'
     | '/list'
     | '/login'
+    | '/reader'
     | '/admin/users'
     | '/auth/reset-password'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FeedsRoute: typeof FeedsRoute
   ListRoute: typeof ListRoute
   LoginRoute: typeof LoginRoute
+  ReaderRoute: typeof ReaderRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reader': {
+      id: '/reader'
+      path: '/reader'
+      fullPath: '/reader'
+      preLoaderRoute: typeof ReaderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -99,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/list'
       fullPath: '/list'
       preLoaderRoute: typeof ListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feeds': {
+      id: '/feeds'
+      path: '/feeds'
+      fullPath: '/feeds'
+      preLoaderRoute: typeof FeedsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -127,8 +177,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FeedsRoute: FeedsRoute,
   ListRoute: ListRoute,
   LoginRoute: LoginRoute,
+  ReaderRoute: ReaderRoute,
   AdminUsersRoute: AdminUsersRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
 }
