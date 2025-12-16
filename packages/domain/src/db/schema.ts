@@ -1,4 +1,4 @@
-import {pgTable, text, timestamp, uuid, varchar, index} from 'drizzle-orm/pg-core';
+import {pgTable, text, timestamp, uuid, varchar, index, boolean, integer} from 'drizzle-orm/pg-core';
 import {relations} from 'drizzle-orm';
 
 export const users = pgTable(
@@ -37,8 +37,71 @@ export const links = pgTable(
   ],
 );
 
+export const rssFeeds = pgTable(
+  'rss_feeds',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, {onDelete: 'cascade'}),
+    title: varchar('title', {length: 500}).notNull(),
+    feedUrl: text('feed_url').notNull(),
+    siteUrl: text('site_url'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('rss_feeds_user_id_idx').on(table.userId),
+    index('rss_feeds_feed_url_idx').on(table.feedUrl),
+  ],
+);
+
+export const rssFeedItems = pgTable(
+  'rss_feed_items',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    feedId: uuid('feed_id')
+      .notNull()
+      .references(() => rssFeeds.id, {onDelete: 'cascade'}),
+    guid: text('guid').notNull(),
+    title: varchar('title', {length: 500}).notNull(),
+    link: text('link').notNull(),
+    summary: text('summary'),
+    content: text('content'),
+    imageUrl: text('image_url'),
+    pubDate: timestamp('pub_date'),
+    read: boolean('read').default(false).notNull(),
+    clicked: boolean('clicked').default(false).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('rss_feed_items_feed_id_idx').on(table.feedId),
+    index('rss_feed_items_pub_date_idx').on(table.pubDate),
+    index('rss_feed_items_feed_guid_idx').on(table.feedId, table.guid),
+  ],
+);
+
+export const rssFeedImportHistory = pgTable(
+  'rss_feed_import_history',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    feedId: uuid('feed_id')
+      .notNull()
+      .references(() => rssFeeds.id, {onDelete: 'cascade'}),
+    importDate: timestamp('import_date').defaultNow().notNull(),
+    itemCount: integer('item_count').notNull(),
+    status: varchar('status', {length: 50}).notNull(),
+    errorMessage: text('error_message'),
+  },
+  (table) => [
+    index('rss_feed_import_history_feed_id_idx').on(table.feedId),
+    index('rss_feed_import_history_import_date_idx').on(table.importDate),
+  ],
+);
+
 export const usersRelations = relations(users, ({many}) => ({
   links: many(links),
+  rssFeeds: many(rssFeeds),
 }));
 
 export const linksRelations = relations(links, ({one}) => ({
@@ -48,7 +111,36 @@ export const linksRelations = relations(links, ({one}) => ({
   }),
 }));
 
+export const rssFeedsRelations = relations(rssFeeds, ({one, many}) => ({
+  user: one(users, {
+    fields: [rssFeeds.userId],
+    references: [users.id],
+  }),
+  items: many(rssFeedItems),
+  importHistory: many(rssFeedImportHistory),
+}));
+
+export const rssFeedItemsRelations = relations(rssFeedItems, ({one}) => ({
+  feed: one(rssFeeds, {
+    fields: [rssFeedItems.feedId],
+    references: [rssFeeds.id],
+  }),
+}));
+
+export const rssFeedImportHistoryRelations = relations(rssFeedImportHistory, ({one}) => ({
+  feed: one(rssFeeds, {
+    fields: [rssFeedImportHistory.feedId],
+    references: [rssFeeds.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Link = typeof links.$inferSelect;
 export type NewLink = typeof links.$inferInsert;
+export type RssFeed = typeof rssFeeds.$inferSelect;
+export type NewRssFeed = typeof rssFeeds.$inferInsert;
+export type RssFeedItem = typeof rssFeedItems.$inferSelect;
+export type NewRssFeedItem = typeof rssFeedItems.$inferInsert;
+export type RssFeedImportHistory = typeof rssFeedImportHistory.$inferSelect;
+export type NewRssFeedImportHistory = typeof rssFeedImportHistory.$inferInsert;

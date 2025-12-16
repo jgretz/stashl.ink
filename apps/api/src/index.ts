@@ -4,7 +4,9 @@ import {initializeServices} from '@stashl/domain/src/services';
 import {authRoutes} from './routes/auth';
 import {userRoutes} from './routes/users';
 import {linkRoutes} from './routes/links';
+import {rssRoutes} from './routes/rss';
 import {authMiddleware} from './middleware/auth';
+import {initializeJobQueue} from './jobQueue';
 
 const app = new Hono();
 
@@ -48,6 +50,11 @@ try {
   process.exit(1);
 }
 
+// Initialize the job queue (for manual RSS import triggers)
+initializeJobQueue().catch((error) => {
+  console.error('❌ Failed to initialize job queue:', error.message);
+});
+
 // Health check endpoint
 app.get('/ping', (c) =>
   c.json({
@@ -66,6 +73,9 @@ app.route('/api/users', userRoutes);
 
 app.use('/api/links/*', authMiddleware());
 app.route('/api/links', linkRoutes);
+
+app.use('/api/rss/*', authMiddleware());
+app.route('/api/rss', rssRoutes);
 
 // Error handling middleware
 app.onError((err, c) => {

@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "@stashl/domain": "workspace:*",
-    "hono": "^4.8.5"
+    "hono": "^4.8.5",
+    "jsonwebtoken": "^9.0.3",
+    "pg-boss": "^10.1.5"
   },
   "devDependencies": {
-    "typescript": "^5.3.0",
-    "@types/node": "^24.0.13"
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.0.13",
+    "typescript": "^5.3.0"
   }
 }

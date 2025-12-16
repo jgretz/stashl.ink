@@ -11,6 +11,7 @@
     "dev:api": "bun run --filter=@stashl/api dev",
     "dev:web": "bun run --filter=@stashl/web dev",
     "dev:mobile": "bun run --filter=@stashl/mobile start",
+    "dev:tasks": "bun run --filter=@stashl/tasks dev",
     "mobile:ios": "bun run --filter=@stashl/mobile ios",
     "mobile:android": "bun run --filter=@stashl/mobile android",
     "type-check": "bun run --filter=* type-check",
