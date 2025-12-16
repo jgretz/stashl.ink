@@ -120,7 +120,7 @@ export interface RssFeedItemRepository {
   findByFeedId(feedId: string, limit?: number): Promise<RssFeedItem[]>;
   findByGuid(feedId: string, guid: string): Promise<RssFeedItem | null>;
   findExistingGuids(feedId: string, guids: string[]): Promise<string[]>;
-  findUnreadByFeedIds(feedIds: string[], limit?: number): Promise<RssFeedItem[]>;
+  findUnreadByFeedIds(feedIds: string[], limit?: number, offset?: number): Promise<RssFeedItem[]>;
   update(id: string, input: UpdateRssFeedItemInput): Promise<RssFeedItem | null>;
   delete(id: string): Promise<boolean>;
   deleteOlderThan(feedId: string, date: Date): Promise<number>;
@@ -132,4 +132,5 @@ export interface RssFeedImportHistoryRepository {
   create(input: CreateImportHistoryInput): Promise<RssFeedImportHistory>;
   findByFeedId(feedId: string, limit?: number): Promise<RssFeedImportHistory[]>;
   getLatestForFeed(feedId: string): Promise<RssFeedImportHistory | null>;
+  getLatestSuccessfulForFeed(feedId: string): Promise<RssFeedImportHistory | null>;
 }

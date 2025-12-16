@@ -18,6 +18,16 @@ export function FeedCard({feed, onDelete}: FeedCardProps) {
     });
   };
 
+  const formatDateTime = (date: string) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
   const handleDelete = () => {
     if (window.confirm(`Are you sure you want to delete "${feed.title}"?`)) {
       onDelete();
@@ -48,7 +58,12 @@ export function FeedCard({feed, onDelete}: FeedCardProps) {
           </div>
 
           <p className='text-sm text-teal-600 truncate mt-1'>{feed.feedUrl}</p>
-          <p className='text-xs text-amber-700 mt-3'>Added {formatDate(feed.createdAt)}</p>
+          <div className='flex gap-4 mt-3'>
+            <p className='text-xs text-amber-700'>Added {formatDate(feed.createdAt)}</p>
+            {feed.lastSuccessfulImport && (
+              <p className='text-xs text-teal-600'>Last import {formatDateTime(feed.lastSuccessfulImport)}</p>
+            )}
+          </div>
         </div>
 
         <div className='flex items-center gap-2 ml-4'>

@@ -1,4 +1,4 @@
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient, useInfiniteQuery} from '@tanstack/react-query';
 import {apiClient} from '../api-client';
 
 export interface RssFeed {
@@ -9,11 +9,13 @@ export interface RssFeed {
   siteUrl: string | null;
   createdAt: string;
   updatedAt: string;
+  lastSuccessfulImport: string | null;
 }
 
 export interface RssFeedItem {
   id: string;
   feedId: string;
+  feedTitle: string;
   guid: string;
   title: string;
   link: string;
@@ -71,8 +73,14 @@ export const feedApi = {
     return apiClient.get(`/rss/feeds/${feedId}/items${query}`);
   },
 
-  getUnreadItems: async (limit?: number): Promise<{items: RssFeedItem[]}> => {
-    const query = limit ? `?limit=${limit}` : '';
+  getUnreadItems: async (
+    limit?: number,
+    offset?: number,
+  ): Promise<{items: RssFeedItem[]; hasMore: boolean; nextOffset: number}> => {
+    const params = new URLSearchParams();
+    if (limit) params.set('limit', String(limit));
+    if (offset) params.set('offset', String(offset));
+    const query = params.toString() ? `?${params.toString()}` : '';
     return apiClient.get(`/rss/items/unread${query}`);
   },
 
@@ -86,6 +94,10 @@ export const feedApi = {
 
   triggerImport: async (feedId: string): Promise<{message: string; feedId: string}> => {
     return apiClient.post(`/rss/feeds/${feedId}/import`, {});
+  },
+
+  triggerImportAll: async (): Promise<{message: string; count: number}> => {
+    return apiClient.post('/rss/feeds/import-all', {});
   },
 };
 
@@ -157,14 +169,21 @@ export function useDeleteFeed() {
   });
 }
 
-export function useUnreadItems(limit?: number) {
-  return useQuery({
+export function useUnreadItems(pageSize = 100) {
+  return useInfiniteQuery({
     queryKey: feedQueryKeys.unreadItems,
-    queryFn: () => feedApi.getUnreadItems(limit),
+    queryFn: ({pageParam = 0}) => feedApi.getUnreadItems(pageSize, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.nextOffset : undefined),
     retry: 1,
     staleTime: 30 * 1000,
   });
 }
+
+type InfiniteUnreadData = {
+  pages: {items: RssFeedItem[]; hasMore: boolean; nextOffset: number}[];
+  pageParams: number[];
+};
 
 export function useMarkItemRead() {
   const queryClient = useQueryClient();
@@ -172,9 +191,15 @@ export function useMarkItemRead() {
   return useMutation({
     mutationFn: feedApi.markItemRead,
     onSuccess: (data) => {
-      queryClient.setQueryData(feedQueryKeys.unreadItems, (old: {items: RssFeedItem[]} | undefined) => {
-        if (!old) return {items: []};
-        return {items: old.items.filter((item) => item.id !== data.item.id)};
+      queryClient.setQueryData(feedQueryKeys.unreadItems, (old: InfiniteUnreadData | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            items: page.items.filter((item) => item.id !== data.item.id),
+          })),
+        };
       });
     },
   });
@@ -186,7 +211,17 @@ export function useMarkAllRead() {
   return useMutation({
     mutationFn: feedApi.markAllRead,
     onSuccess: () => {
-      queryClient.setQueryData(feedQueryKeys.unreadItems, {items: []});
+      queryClient.setQueryData(feedQueryKeys.unreadItems, (old: InfiniteUnreadData | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            items: [],
+            hasMore: false,
+          })),
+        };
+      });
       queryClient.invalidateQueries({queryKey: feedQueryKeys.unreadItems});
     },
   });
@@ -195,5 +230,11 @@ export function useMarkAllRead() {
 export function useTriggerImport() {
   return useMutation({
     mutationFn: feedApi.triggerImport,
+  });
+}
+
+export function useTriggerImportAll() {
+  return useMutation({
+    mutationFn: feedApi.triggerImportAll,
   });
 }

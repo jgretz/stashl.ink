@@ -52,7 +52,7 @@ export class DrizzleRssFeedItemRepository implements RssFeedItemRepository {
     return items.map((i) => i.guid);
   }
 
-  async findUnreadByFeedIds(feedIds: string[], limit = 100): Promise<RssFeedItem[]> {
+  async findUnreadByFeedIds(feedIds: string[], limit = 100, offset = 0): Promise<RssFeedItem[]> {
     const db = getDb();
     if (feedIds.length === 0) return [];
     return await db
@@ -60,7 +60,8 @@ export class DrizzleRssFeedItemRepository implements RssFeedItemRepository {
       .from(rssFeedItems)
       .where(and(inArray(rssFeedItems.feedId, feedIds), eq(rssFeedItems.read, false)))
       .orderBy(desc(rssFeedItems.pubDate))
-      .limit(limit);
+      .limit(limit)
+      .offset(offset);
   }
 
   async update(id: string, input: UpdateRssFeedItemInput): Promise<RssFeedItem | null> {

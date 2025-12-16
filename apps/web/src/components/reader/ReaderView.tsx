@@ -1,8 +1,9 @@
+import {useEffect, useRef, useCallback} from 'react';
 import {match} from 'ts-pattern';
 import {useUnreadItems, useMarkAllRead, type RssFeedItem} from '@web/services/feeds';
 import {ReaderItem} from './ReaderItem';
 import {Button} from '@web/components/ui/button';
-import {CheckCheck} from 'lucide-react';
+import {CheckCheck, Loader2} from 'lucide-react';
 
 function LoadingState() {
   return (
@@ -33,15 +34,49 @@ function ItemsList({
   items,
   onMarkAllRead,
   isMarkingAll,
+  hasNextPage,
+  isFetchingNextPage,
+  onLoadMore,
 }: {
   items: RssFeedItem[];
   onMarkAllRead: () => void;
   isMarkingAll: boolean;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  onLoadMore: () => void;
 }) {
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        onLoadMore();
+      }
+    },
+    [hasNextPage, isFetchingNextPage, onLoadMore],
+  );
+
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: '200px',
+      threshold: 0,
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [handleObserver]);
+
   return (
     <div>
       <div className='flex justify-between items-center mb-4'>
-        <p className='text-sm text-amber-700'>{items.length} unread items</p>
+        <p className='text-sm text-amber-700'>
+          {items.length} unread items{hasNextPage ? '+' : ''}
+        </p>
         <Button
           variant='outline'
           size='sm'
@@ -59,6 +94,15 @@ function ItemsList({
           <ReaderItem key={item.id} item={item} />
         ))}
       </div>
+
+      <div ref={loadMoreRef} className='py-4 flex justify-center'>
+        {isFetchingNextPage && (
+          <div className='flex items-center gap-2 text-teal-600'>
+            <Loader2 className='h-5 w-5 animate-spin' />
+            <span className='text-sm'>Loading more...</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -70,31 +114,44 @@ type ReaderViewState =
   | {type: 'success'; items: RssFeedItem[]};
 
 export function ReaderView() {
-  const {data, isLoading, error} = useUnreadItems();
+  const {data, isLoading, error, hasNextPage, isFetchingNextPage, fetchNextPage} = useUnreadItems();
   const markAllReadMutation = useMarkAllRead();
 
   const handleMarkAllRead = () => {
     markAllReadMutation.mutate();
   };
 
-  const state: ReaderViewState = match({isLoading, error, data})
+  const handleLoadMore = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
+
+  const allItems = data?.pages.flatMap((page) => page.items) ?? [];
+
+  const state: ReaderViewState = match({isLoading, error, allItems})
     .with({isLoading: true}, () => ({type: 'loading'}) as const)
     .when(
       ({error}) => error !== null && error !== undefined,
       ({error}) => ({type: 'error', error: error?.message || 'Unknown error'}) as const,
     )
     .when(
-      ({data}) => !data?.items || data.items.length === 0,
+      ({allItems}) => allItems.length === 0,
       () => ({type: 'empty'}) as const,
     )
-    .otherwise(({data}) => ({type: 'success', items: data!.items}) as const);
+    .otherwise(({allItems}) => ({type: 'success', items: allItems}) as const);
 
   return match(state)
     .with({type: 'loading'}, () => <LoadingState />)
     .with({type: 'error'}, ({error}) => <ErrorState error={error} />)
     .with({type: 'empty'}, () => <EmptyState />)
     .with({type: 'success'}, ({items}) => (
-      <ItemsList items={items} onMarkAllRead={handleMarkAllRead} isMarkingAll={markAllReadMutation.isPending} />
+      <ItemsList
+        items={items}
+        onMarkAllRead={handleMarkAllRead}
+        isMarkingAll={markAllReadMutation.isPending}
+        hasNextPage={hasNextPage ?? false}
+        isFetchingNextPage={isFetchingNextPage}
+        onLoadMore={handleLoadMore}
+      />
     ))
     .exhaustive();
 }

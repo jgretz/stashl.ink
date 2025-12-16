@@ -3,12 +3,12 @@ import {RssFeedService} from '@stashl/domain/src/services/rssFeed.service';
 
 export const rssRoutes = new Hono();
 
-// GET /api/rss/feeds - Get all user's feeds
+// GET /api/rss/feeds - Get all user's feeds with last import date
 rssRoutes.get('/feeds', async (c) => {
   try {
     const {userId} = c.get('user');
     const service = new RssFeedService();
-    const feeds = await service.getFeedsByUserId(userId);
+    const feeds = await service.getFeedsWithLastImportByUserId(userId);
     return c.json({feeds});
   } catch (error) {
     throw error;
@@ -89,10 +89,12 @@ rssRoutes.get('/items/unread', async (c) => {
   try {
     const {userId} = c.get('user');
     const limit = parseInt(c.req.query('limit') || '100');
+    const offset = parseInt(c.req.query('offset') || '0');
 
     const service = new RssFeedService();
-    const items = await service.getUnreadItemsByUserId(userId, limit);
-    return c.json({items});
+    const items = await service.getUnreadItemsWithFeedTitleByUserId(userId, limit, offset);
+    const hasMore = items.length === limit;
+    return c.json({items, hasMore, nextOffset: offset + items.length});
   } catch (error) {
     throw error;
   }
@@ -165,6 +167,33 @@ rssRoutes.get('/feeds/:id/history', async (c) => {
     const service = new RssFeedService();
     const history = await service.getImportHistory(feedId, userId, limit);
     return c.json({history});
+  } catch (error) {
+    throw error;
+  }
+});
+
+// POST /api/rss/feeds/import-all - Trigger import for all user's feeds
+rssRoutes.post('/feeds/import-all', async (c) => {
+  try {
+    const {userId} = c.get('user');
+
+    const service = new RssFeedService();
+    const feeds = await service.getFeedsByUserId(userId);
+
+    if (feeds.length === 0) {
+      return c.json({message: 'No feeds to import', count: 0});
+    }
+
+    const {getJobQueue} = await import('../jobQueue');
+    const boss = getJobQueue();
+    if (boss) {
+      for (const feed of feeds) {
+        await boss.send('import-feed', {feedId: feed.id, feedUrl: feed.feedUrl});
+      }
+      return c.json({message: `Queued ${feeds.length} feed imports`, count: feeds.length});
+    } else {
+      return c.json({error: 'Job queue not available'}, 503);
+    }
   } catch (error) {
     throw error;
   }

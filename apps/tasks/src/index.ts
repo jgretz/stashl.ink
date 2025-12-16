@@ -30,6 +30,12 @@ async function main() {
   await boss.start();
   console.log('✅ pg-boss started');
 
+  // Create queues (required before scheduling or sending)
+  await boss.createQueue('schedule-feed-imports');
+  await boss.createQueue('import-feed');
+  await boss.createQueue('cleanup-old-items');
+  console.log('✅ Queues created');
+
   // Register scheduled jobs
   await boss.schedule('schedule-feed-imports', '*/30 * * * *');
   console.log('📅 Scheduled: feed imports every 30 minutes');

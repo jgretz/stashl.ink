@@ -56,6 +56,22 @@ export class RssFeedService {
     return await this.feedRepository.findAllByUser(userId);
   }
 
+  async getFeedsWithLastImportByUserId(
+    userId: string,
+  ): Promise<(RssFeed & {lastSuccessfulImport: Date | null})[]> {
+    const feeds = await this.feedRepository.findAllByUser(userId);
+    const feedsWithImport = await Promise.all(
+      feeds.map(async (feed) => {
+        const lastImport = await this.historyRepository.getLatestSuccessfulForFeed(feed.id);
+        return {
+          ...feed,
+          lastSuccessfulImport: lastImport?.importDate ?? null,
+        };
+      }),
+    );
+    return feedsWithImport;
+  }
+
   async getAllFeeds(): Promise<RssFeed[]> {
     return await this.feedRepository.findAll();
   }
@@ -97,6 +113,21 @@ export class RssFeedService {
     const feeds = await this.feedRepository.findAllByUser(userId);
     const feedIds = feeds.map((f) => f.id);
     return await this.itemRepository.findUnreadByFeedIds(feedIds, limit);
+  }
+
+  async getUnreadItemsWithFeedTitleByUserId(
+    userId: string,
+    limit?: number,
+    offset?: number,
+  ): Promise<(RssFeedItem & {feedTitle: string})[]> {
+    const feeds = await this.feedRepository.findAllByUser(userId);
+    const feedMap = new Map(feeds.map((f) => [f.id, f.title]));
+    const feedIds = feeds.map((f) => f.id);
+    const items = await this.itemRepository.findUnreadByFeedIds(feedIds, limit, offset);
+    return items.map((item) => ({
+      ...item,
+      feedTitle: feedMap.get(item.feedId) || 'Unknown Feed',
+    }));
   }
 
   async getItemById(id: string): Promise<RssFeedItem | null> {
