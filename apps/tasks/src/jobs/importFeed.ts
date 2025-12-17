@@ -40,7 +40,7 @@ async function processJob(job: PgBoss.Job<ImportFeedJob>) {
         summary: item.contentSnippet || item.summary,
         content: item.content,
         imageUrl: extractImageUrl(item),
-        pubDate: item.pubDate ? new Date(item.pubDate) : undefined,
+        pubDate: parsePubDate(item.pubDate),
       }));
 
     const result = await service.importFeedItems(feedId, items);
@@ -51,6 +51,15 @@ async function processJob(job: PgBoss.Job<ImportFeedJob>) {
     await service.recordImportError(feedId, errorMessage);
     throw error;
   }
+}
+
+function parsePubDate(pubDate: string | undefined): Date {
+  if (!pubDate) return new Date();
+
+  const parsed = new Date(pubDate);
+  if (isNaN(parsed.getTime())) return new Date();
+
+  return parsed;
 }
 
 function extractImageUrl(item: any): string | undefined {
