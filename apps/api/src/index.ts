@@ -5,6 +5,7 @@ import {authRoutes} from './routes/auth';
 import {userRoutes} from './routes/users';
 import {linkRoutes} from './routes/links';
 import {rssRoutes} from './routes/rss';
+import {statsRoutes} from './routes/stats';
 import {authMiddleware} from './middleware/auth';
 import {initializeJobQueue} from './jobQueue';
 
@@ -76,6 +77,10 @@ app.route('/api/links', linkRoutes);
 
 app.use('/api/rss/*', authMiddleware());
 app.route('/api/rss', rssRoutes);
+
+// Stats routes (POST uses API key, GET uses user auth)
+app.use('/api/stats/task-runner/latest', authMiddleware());
+app.route('/api/stats', statsRoutes);
 
 // Error handling middleware
 app.onError((err, c) => {

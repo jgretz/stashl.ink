@@ -1,4 +1,4 @@
-import {pgTable, text, timestamp, uuid, varchar, index, boolean, integer} from 'drizzle-orm/pg-core';
+import {pgTable, text, timestamp, uuid, varchar, index, boolean, integer, jsonb} from 'drizzle-orm/pg-core';
 import {relations} from 'drizzle-orm';
 
 export const users = pgTable(
@@ -99,6 +99,20 @@ export const rssFeedImportHistory = pgTable(
   ],
 );
 
+export const stats = pgTable(
+  'stats',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    type: varchar('type', {length: 100}).notNull(),
+    statTime: timestamp('stat_time').defaultNow().notNull(),
+    data: jsonb('data').notNull(),
+  },
+  (table) => [
+    index('stats_type_idx').on(table.type),
+    index('stats_type_time_idx').on(table.type, table.statTime),
+  ],
+);
+
 export const usersRelations = relations(users, ({many}) => ({
   links: many(links),
   rssFeeds: many(rssFeeds),
@@ -144,3 +158,5 @@ export type RssFeedItem = typeof rssFeedItems.$inferSelect;
 export type NewRssFeedItem = typeof rssFeedItems.$inferInsert;
 export type RssFeedImportHistory = typeof rssFeedImportHistory.$inferSelect;
 export type NewRssFeedImportHistory = typeof rssFeedImportHistory.$inferInsert;
+export type Stats = typeof stats.$inferSelect;
+export type NewStats = typeof stats.$inferInsert;

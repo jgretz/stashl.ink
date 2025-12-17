@@ -4,6 +4,7 @@ import type {
   RssFeed as DbRssFeed,
   RssFeedItem as DbRssFeedItem,
   RssFeedImportHistory as DbRssFeedImportHistory,
+  Stats as DbStats,
 } from './db/schema';
 
 export type User = DbUser;
@@ -133,4 +134,22 @@ export interface RssFeedImportHistoryRepository {
   findByFeedId(feedId: string, limit?: number): Promise<RssFeedImportHistory[]>;
   getLatestForFeed(feedId: string): Promise<RssFeedImportHistory | null>;
   getLatestSuccessfulForFeed(feedId: string): Promise<RssFeedImportHistory | null>;
+}
+
+export type Stats = DbStats;
+
+export interface TaskRunnerStatsData {
+  successCount: number;
+  failCount: number;
+}
+
+export interface CreateStatsInput {
+  type: string;
+  data: Record<string, unknown>;
+  statTime?: Date;
+}
+
+export interface StatsRepository {
+  create(input: CreateStatsInput): Promise<Stats>;
+  getLatestByType(type: string): Promise<Stats | null>;
 }
