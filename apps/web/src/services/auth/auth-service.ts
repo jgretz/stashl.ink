@@ -6,6 +6,8 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  emailIntegrationEnabled: boolean;
+  emailFilter: string | null;
   createdAt: string;
   updatedAt: string;
 }

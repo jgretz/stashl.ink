@@ -9,15 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReaderRouteImport } from './routes/reader'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ListRouteImport } from './routes/list'
+import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as FeedsRouteImport } from './routes/feeds'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReaderRoute = ReaderRouteImport.update({
   id: '/reader',
   path: '/reader',
@@ -31,6 +38,11 @@ const LoginRoute = LoginRouteImport.update({
 const ListRoute = ListRouteImport.update({
   id: '/list',
   path: '/list',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InboxRoute = InboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedsRoute = FeedsRouteImport.update({
@@ -62,9 +74,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/feeds': typeof FeedsRoute
+  '/inbox': typeof InboxRoute
   '/list': typeof ListRoute
   '/login': typeof LoginRoute
   '/reader': typeof ReaderRoute
+  '/settings': typeof SettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/admin': typeof AdminIndexRoute
@@ -72,9 +86,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/feeds': typeof FeedsRoute
+  '/inbox': typeof InboxRoute
   '/list': typeof ListRoute
   '/login': typeof LoginRoute
   '/reader': typeof ReaderRoute
+  '/settings': typeof SettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/admin': typeof AdminIndexRoute
@@ -83,9 +99,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/feeds': typeof FeedsRoute
+  '/inbox': typeof InboxRoute
   '/list': typeof ListRoute
   '/login': typeof LoginRoute
   '/reader': typeof ReaderRoute
+  '/settings': typeof SettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/admin/': typeof AdminIndexRoute
@@ -95,9 +113,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/feeds'
+    | '/inbox'
     | '/list'
     | '/login'
     | '/reader'
+    | '/settings'
     | '/admin/users'
     | '/auth/reset-password'
     | '/admin'
@@ -105,9 +125,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/feeds'
+    | '/inbox'
     | '/list'
     | '/login'
     | '/reader'
+    | '/settings'
     | '/admin/users'
     | '/auth/reset-password'
     | '/admin'
@@ -115,9 +137,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/feeds'
+    | '/inbox'
     | '/list'
     | '/login'
     | '/reader'
+    | '/settings'
     | '/admin/users'
     | '/auth/reset-password'
     | '/admin/'
@@ -126,9 +150,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FeedsRoute: typeof FeedsRoute
+  InboxRoute: typeof InboxRoute
   ListRoute: typeof ListRoute
   LoginRoute: typeof LoginRoute
   ReaderRoute: typeof ReaderRoute
+  SettingsRoute: typeof SettingsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -136,6 +162,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reader': {
       id: '/reader'
       path: '/reader'
@@ -155,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/list'
       fullPath: '/list'
       preLoaderRoute: typeof ListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inbox': {
+      id: '/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof InboxRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feeds': {
@@ -198,9 +238,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FeedsRoute: FeedsRoute,
+  InboxRoute: InboxRoute,
   ListRoute: ListRoute,
   LoginRoute: LoginRoute,
   ReaderRoute: ReaderRoute,
+  SettingsRoute: SettingsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AdminIndexRoute: AdminIndexRoute,

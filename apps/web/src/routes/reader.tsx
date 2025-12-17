@@ -35,7 +35,7 @@ function Reader() {
     <AuthenticatedLayout>
       <div className='h-full flex flex-col'>
         <div className='flex justify-between items-center mb-4'>
-          <h1 className='text-2xl font-semibold text-teal-800'>Reader</h1>
+          <h1 className='text-2xl font-semibold text-teal-800'>RSS Reader</h1>
         </div>
 
         <div className='flex-1 overflow-auto'>

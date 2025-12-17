@@ -111,10 +111,10 @@ export function UsersTable() {
                 Email
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Created
+                Email Integration
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                Updated
+                Created
               </th>
               <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
                 Actions
@@ -131,13 +131,18 @@ export function UsersTable() {
                   <div className='text-sm text-gray-900'>{user.email}</div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap'>
-                  <div className='text-sm text-gray-500'>
-                    {new Date(user.createdAt).toLocaleDateString()}
+                  <div className='flex items-center gap-2'>
+                    <div
+                      className={`w-2 h-2 rounded-full ${user.emailIntegrationEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
+                    ></div>
+                    <span className='text-sm text-gray-500'>
+                      {user.emailIntegrationEnabled ? 'Enabled' : 'Disabled'}
+                    </span>
                   </div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap'>
                   <div className='text-sm text-gray-500'>
-                    {new Date(user.updatedAt).toLocaleDateString()}
+                    {new Date(user.createdAt).toLocaleDateString()}
                   </div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap'>

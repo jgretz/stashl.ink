@@ -13,6 +13,7 @@ export async function initializeJobQueue(): Promise<void> {
     boss = new PgBoss(databaseUrl);
     await boss.start();
     await boss.createQueue('import-feed');
+    await boss.createQueue('import-emails');
     console.log('✅ Job queue initialized');
   } catch (error) {
     console.error('❌ Failed to initialize job queue:', error);

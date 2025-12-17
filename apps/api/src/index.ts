@@ -6,6 +6,7 @@ import {userRoutes} from './routes/users';
 import {linkRoutes} from './routes/links';
 import {rssRoutes} from './routes/rss';
 import {statsRoutes} from './routes/stats';
+import {emailRoutes} from './routes/email';
 import {authMiddleware} from './middleware/auth';
 import {initializeJobQueue} from './jobQueue';
 
@@ -80,7 +81,16 @@ app.route('/api/rss', rssRoutes);
 
 // Stats routes (POST uses API key, GET uses user auth)
 app.use('/api/stats/task-runner/latest', authMiddleware());
+app.use('/api/stats/email-processor/latest', authMiddleware());
 app.route('/api/stats', statsRoutes);
+
+// Email routes (OAuth callback is public, others need auth)
+app.use('/api/email/settings', authMiddleware());
+app.use('/api/email/disconnect', authMiddleware());
+app.use('/api/email/oauth/url', authMiddleware());
+app.use('/api/email/items/*', authMiddleware());
+app.use('/api/email/items', authMiddleware());
+app.route('/api/email', emailRoutes);
 
 // Error handling middleware
 app.onError((err, c) => {

@@ -26,13 +26,21 @@ export function EditUserDialog({
       email: user?.email || '',
       name: user?.name || '',
       password: '',
-    } as UpdateUserInput,
+      emailIntegrationEnabled: user?.emailIntegrationEnabled || false,
+      emailFilter: user?.emailFilter || '',
+    } as UpdateUserInput & {emailIntegrationEnabled: boolean; emailFilter: string},
     onSubmit: async ({value}) => {
       if (user) {
         const updateData: UpdateUserInput = {};
         if (value.email !== user.email) updateData.email = value.email;
         if (value.name !== user.name) updateData.name = value.name;
         if (value.password) updateData.password = value.password;
+        if (value.emailIntegrationEnabled !== user.emailIntegrationEnabled) {
+          updateData.emailIntegrationEnabled = value.emailIntegrationEnabled;
+        }
+        if (value.emailFilter !== (user.emailFilter || '')) {
+          updateData.emailFilter = value.emailFilter;
+        }
 
         onSubmit(user.id, updateData);
       }
@@ -107,6 +115,42 @@ export function EditUserDialog({
               />
             )}
           </form.Field>
+
+          <div className='border-t border-gray-200 pt-4 mt-4'>
+            <h4 className='text-sm font-medium text-gray-700 mb-3'>Email Integration</h4>
+
+            <form.Field name='emailIntegrationEnabled'>
+              {(field) => (
+                <div className='flex items-center gap-3 mb-3'>
+                  <input
+                    type='checkbox'
+                    id={field.name}
+                    checked={field.state.value as boolean}
+                    onChange={(e) => field.handleChange(e.target.checked)}
+                    className='h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500'
+                  />
+                  <label htmlFor={field.name} className='text-sm text-gray-700'>
+                    Enable email integration
+                  </label>
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name='emailFilter'>
+              {(field) => (
+                <FormInput
+                  id={field.name}
+                  name={field.name}
+                  label='Email Filter'
+                  value={field.state.value as string}
+                  onBlur={field.handleBlur}
+                  onChange={field.handleChange}
+                  error={field.state.meta.errors?.[0]}
+                  placeholder='e.g., label:stash'
+                />
+              )}
+            </form.Field>
+          </div>
 
           <div className='flex flex-row gap-3 mt-6'>
             <Button type='button' variant='outline' onClick={handleClose} className='flex-1'>

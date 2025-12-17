@@ -1,4 +1,4 @@
-import {pgTable, text, timestamp, uuid, varchar, index, boolean, integer, jsonb} from 'drizzle-orm/pg-core';
+import {pgTable, text, timestamp, uuid, varchar, index, boolean, integer, jsonb, uniqueIndex} from 'drizzle-orm/pg-core';
 import {relations} from 'drizzle-orm';
 
 export const users = pgTable(
@@ -10,6 +10,11 @@ export const users = pgTable(
     password: text('password').notNull(),
     resetToken: text('reset_token'),
     resetTokenExpiry: timestamp('reset_token_expiry'),
+    emailIntegrationEnabled: boolean('email_integration_enabled').default(false).notNull(),
+    emailFilter: varchar('email_filter', {length: 500}),
+    gmailAccessToken: text('gmail_access_token'),
+    gmailRefreshToken: text('gmail_refresh_token'),
+    gmailTokenExpiry: timestamp('gmail_token_expiry'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
@@ -113,9 +118,33 @@ export const stats = pgTable(
   ],
 );
 
+export const emailItems = pgTable(
+  'email_items',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, {onDelete: 'cascade'}),
+    emailMessageId: text('email_message_id').notNull(),
+    emailFrom: varchar('email_from', {length: 255}).notNull(),
+    link: text('link').notNull(),
+    title: varchar('title', {length: 500}),
+    description: text('description'),
+    read: boolean('read').default(false).notNull(),
+    clicked: boolean('clicked').default(false).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('email_items_user_id_idx').on(table.userId),
+    index('email_items_created_at_idx').on(table.createdAt),
+    uniqueIndex('email_items_user_message_link_idx').on(table.userId, table.emailMessageId, table.link),
+  ],
+);
+
 export const usersRelations = relations(users, ({many}) => ({
   links: many(links),
   rssFeeds: many(rssFeeds),
+  emailItems: many(emailItems),
 }));
 
 export const linksRelations = relations(links, ({one}) => ({
@@ -148,6 +177,13 @@ export const rssFeedImportHistoryRelations = relations(rssFeedImportHistory, ({o
   }),
 }));
 
+export const emailItemsRelations = relations(emailItems, ({one}) => ({
+  user: one(users, {
+    fields: [emailItems.userId],
+    references: [users.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Link = typeof links.$inferSelect;
@@ -160,3 +196,5 @@ export type RssFeedImportHistory = typeof rssFeedImportHistory.$inferSelect;
 export type NewRssFeedImportHistory = typeof rssFeedImportHistory.$inferInsert;
 export type Stats = typeof stats.$inferSelect;
 export type NewStats = typeof stats.$inferInsert;
+export type EmailItem = typeof emailItems.$inferSelect;
+export type NewEmailItem = typeof emailItems.$inferInsert;

@@ -6,6 +6,8 @@ export interface UpdateUserInput {
   email?: string;
   name?: string;
   password?: string;
+  emailIntegrationEnabled?: boolean;
+  emailFilter?: string;
 }
 
 // Query Keys

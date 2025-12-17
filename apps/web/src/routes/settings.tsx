@@ -1,16 +1,15 @@
 import {createFileRoute, useRouter} from '@tanstack/react-router';
 import {useEffect} from 'react';
 import {requireAuth, isAuthenticated} from '@web/services';
-import {AdminLayout} from '@web/components/layout/AdminLayout';
-import {TaskStatusWidget} from '@web/components/admin/TaskStatusWidget';
-import {EmailStatusWidget} from '@web/components/admin/EmailStatusWidget';
+import {AuthenticatedLayout} from '@web/components/layout/AuthenticatedLayout';
+import {EmailSettings} from '@web/components/settings/EmailSettings';
 
-export const Route = createFileRoute('/admin/')({
+export const Route = createFileRoute('/settings')({
   beforeLoad: requireAuth,
-  component: AdminDashboard,
+  component: Settings,
 });
 
-function AdminDashboard() {
+function Settings() {
   const router = useRouter();
 
   useEffect(() => {
@@ -33,17 +32,16 @@ function AdminDashboard() {
   }
 
   return (
-    <AdminLayout>
+    <AuthenticatedLayout>
       <div className='h-full flex flex-col'>
-        <div className='flex justify-between items-center mb-6'>
-          <h1 className='text-2xl font-semibold text-teal-800'>Admin Dashboard</h1>
+        <div className='mb-6'>
+          <h1 className='text-2xl font-semibold text-teal-800'>Settings</h1>
         </div>
 
-        <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-          <TaskStatusWidget />
-          <EmailStatusWidget />
+        <div className='space-y-6'>
+          <EmailSettings />
         </div>
       </div>
-    </AdminLayout>
+    </AuthenticatedLayout>
   );
 }

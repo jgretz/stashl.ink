@@ -9,7 +9,10 @@
   },
   "dependencies": {
     "@stashl/domain": "workspace:*",
+    "cheerio": "^1.1.2",
+    "googleapis": "^169.0.0",
     "pg-boss": "^10.1.5",
+    "postgres": "^3.4.7",
     "rss-parser": "^3.13.0"
   },
   "devDependencies": {
