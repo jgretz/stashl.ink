@@ -14,6 +14,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@web/components/ui/sidebar';
+import {Separator} from '@web/components/ui/separator';
 import {clearAuthToken} from '@web/services';
 import {Mascot} from '@web/components/Mascot';
 import {Button} from '@web/components/ui/button';
@@ -34,8 +35,7 @@ export function AuthenticatedLayout({children}: AuthenticatedLayoutProps) {
 
   return (
     <SidebarProvider className='min-h-screen'>
-      <div className='flex min-h-screen w-full'>
-        <Sidebar side='left' variant='sidebar' collapsible='none' className='border-r'>
+      <Sidebar side='left' variant='sidebar' collapsible='offcanvas' className='border-r'>
           <SidebarHeader className='border-b border-sidebar-border'>
             <div className='flex items-center gap-3 px-2 py-2'>
               <Mascot />
@@ -87,10 +87,15 @@ export function AuthenticatedLayout({children}: AuthenticatedLayoutProps) {
           </SidebarFooter>
         </Sidebar>
 
-        <main className='flex-1 bg-[oklch(0.98_0.025_82)] flex flex-col'>
-          <div className='flex-1 p-4'>{children}</div>
-        </main>
-      </div>
+      <SidebarInset className='bg-[oklch(0.98_0.025_82)] md:ml-64'>
+        <header className='flex h-14 items-center gap-3 border-b px-4 md:hidden'>
+          <SidebarTrigger />
+          <Separator orientation='vertical' className='h-6' />
+          <Mascot size='sm' />
+          <span className='font-bold text-sidebar-foreground'>Stashl.ink</span>
+        </header>
+        <div className='flex-1 p-4'>{children}</div>
+      </SidebarInset>
     </SidebarProvider>
   );
 }
