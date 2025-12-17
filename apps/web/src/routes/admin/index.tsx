@@ -1,15 +1,15 @@
 import {createFileRoute, useRouter} from '@tanstack/react-router';
 import {useEffect} from 'react';
-import {UsersTable} from '@web/components/admin/UsersTable';
 import {requireAuth, isAuthenticated} from '@web/services';
 import {AdminLayout} from '@web/components/layout/AdminLayout';
+import {TaskStatusWidget} from '@web/components/admin/TaskStatusWidget';
 
-export const Route = createFileRoute('/admin/users')({
+export const Route = createFileRoute('/admin/')({
   beforeLoad: requireAuth,
-  component: AdminUsers,
+  component: AdminDashboard,
 });
 
-function AdminUsers() {
+function AdminDashboard() {
   const router = useRouter();
 
   useEffect(() => {
@@ -35,10 +35,12 @@ function AdminUsers() {
     <AdminLayout>
       <div className='h-full flex flex-col'>
         <div className='flex justify-between items-center mb-6'>
-          <h1 className='text-2xl font-semibold text-teal-800'>User Management</h1>
+          <h1 className='text-2xl font-semibold text-teal-800'>Admin Dashboard</h1>
         </div>
 
-        <UsersTable />
+        <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
+          <TaskStatusWidget />
+        </div>
       </div>
     </AdminLayout>
   );
