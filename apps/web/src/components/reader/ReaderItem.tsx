@@ -57,7 +57,9 @@ export function ReaderItem({item}: ReaderItemProps) {
         className='p-3 md:p-2 text-orange-500 hover:text-orange-600 hover:bg-orange-100 rounded-full transition-colors disabled:opacity-50'
         title='Save to links'
       >
-        <Bookmark className={`h-8 w-8 md:h-5 md:w-5 ${createLinkMutation.isPending ? 'animate-pulse' : ''}`} />
+        <Bookmark
+          className={`h-8 w-8 md:h-5 md:w-5 ${createLinkMutation.isPending ? 'animate-pulse' : ''}`}
+        />
       </button>
       <button
         onClick={handleMarkRead}
@@ -65,14 +67,16 @@ export function ReaderItem({item}: ReaderItemProps) {
         className='p-3 md:p-2 text-teal-600 hover:text-teal-700 hover:bg-teal-100 rounded-full transition-colors disabled:opacity-50'
         title='Mark as read'
       >
-        <Check className={`h-8 w-8 md:h-5 md:w-5 ${markReadMutation.isPending ? 'animate-pulse' : ''}`} />
+        <Check
+          className={`h-8 w-8 md:h-5 md:w-5 ${markReadMutation.isPending ? 'animate-pulse' : ''}`}
+        />
       </button>
     </div>
   );
 
   const ImagePlaceholder = () => (
     <div
-      className='w-20 h-20 md:w-32 md:h-32 flex-shrink-0 bg-cover bg-center bg-amber-100'
+      className='w-20 h-20 md:w-32 md:h-32 shrink-0 bg-cover bg-center bg-amber-100'
       style={item.imageUrl ? {backgroundImage: `url(${item.imageUrl})`} : undefined}
     />
   );
@@ -90,7 +94,7 @@ export function ReaderItem({item}: ReaderItemProps) {
         <h3 className='text-lg font-medium text-teal-700 group-hover:text-orange-600 transition-colors line-clamp-2'>
           {item.title}
         </h3>
-        <ExternalLink className='h-4 w-4 flex-shrink-0 text-teal-600 group-hover:text-orange-600' />
+        <ExternalLink className='h-4 w-4 shrink-0 text-teal-600 group-hover:text-orange-600' />
       </a>
 
       {item.summary && <p className='text-amber-900 mt-2 line-clamp-3'>{item.summary}</p>}

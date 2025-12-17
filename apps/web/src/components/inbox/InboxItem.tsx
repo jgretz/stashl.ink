@@ -105,7 +105,7 @@ export function InboxItem({item}: InboxItemProps) {
         <h3 className='text-lg font-medium text-teal-700 group-hover:text-orange-600 transition-colors line-clamp-2'>
           {displayTitle}
         </h3>
-        <ExternalLink className='h-4 w-4 flex-shrink-0 text-teal-600 group-hover:text-orange-600' />
+        <ExternalLink className='h-4 w-4 shrink-0 text-teal-600 group-hover:text-orange-600' />
       </a>
 
       {item.description && (

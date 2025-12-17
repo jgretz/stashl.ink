@@ -16,6 +16,7 @@ import {
 } from '@web/components/ui/sidebar';
 import {Separator} from '@web/components/ui/separator';
 import {clearAuthToken} from '@web/services';
+import {useEmailSettings} from '@web/services/email';
 import {Mascot} from '@web/components/Mascot';
 import {Button} from '@web/components/ui/button';
 
@@ -25,6 +26,8 @@ interface AuthenticatedLayoutProps {
 
 export function AuthenticatedLayout({children}: AuthenticatedLayoutProps) {
   const router = useRouter();
+  const {data: emailSettings} = useEmailSettings();
+  const showInbox = emailSettings?.emailIntegrationEnabled ?? false;
 
   const handleLogout = () => {
     clearAuthToken();
@@ -63,14 +66,16 @@ export function AuthenticatedLayout({children}: AuthenticatedLayoutProps) {
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <a href='/inbox'>
-                      <Mail className='w-4 h-4' />
-                      <span>Inbox</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                {showInbox && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <a href='/inbox'>
+                        <Mail className='w-4 h-4' />
+                        <span>Inbox</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
                 <hr />
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
