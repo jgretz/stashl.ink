@@ -1,15 +1,17 @@
 import type PgBoss from 'pg-boss';
 import {RssFeedService} from '@stashl/domain/src/services/rssFeed.service';
 
-const API_URL = process.env.API_URL || 'http://localhost:3001';
+const API_URL = process.env.API_URL;
 const TASK_API_KEY = process.env.TASK_API_KEY;
-
-console.log('API_URL:', API_URL);
-console.log('TASK_API_KEY set:', !!TASK_API_KEY);
 
 async function reportTaskStats(successCount: number, failCount: number): Promise<void> {
   if (!TASK_API_KEY) {
     console.warn('TASK_API_KEY not set, skipping stats reporting');
+    return;
+  }
+
+  if (!API_URL) {
+    console.warn('API_URL not set, skipping stats reporting');
     return;
   }
 
