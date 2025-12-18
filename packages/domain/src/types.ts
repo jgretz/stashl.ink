@@ -5,6 +5,7 @@ import type {
   RssFeedItem as DbRssFeedItem,
   RssFeedImportHistory as DbRssFeedImportHistory,
   Stats as DbStats,
+  EmailItem as DbEmailItem,
 } from './db/schema';
 
 export type User = DbUser;
@@ -41,6 +42,14 @@ export interface UpdateUserInput {
   email?: string;
   name?: string;
   password?: string;
+  emailIntegrationEnabled?: boolean;
+  emailFilter?: string;
+}
+
+export interface UpdateGmailTokensInput {
+  gmailAccessToken: string;
+  gmailRefreshToken: string;
+  gmailTokenExpiry: Date;
 }
 
 export interface LoginInput {
@@ -58,7 +67,10 @@ export interface UserRepository {
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   findAll(): Promise<User[]>;
+  findAllWithEmailEnabled(): Promise<User[]>;
   update(id: string, input: UpdateUserInput): Promise<User | null>;
+  updateGmailTokens(id: string, tokens: UpdateGmailTokensInput): Promise<User | null>;
+  clearGmailTokens(id: string): Promise<User | null>;
   delete(id: string): Promise<boolean>;
   setResetToken(email: string, token: string, expiry: Date): Promise<boolean>;
   findByResetToken(token: string): Promise<User | null>;
@@ -152,4 +164,40 @@ export interface CreateStatsInput {
 export interface StatsRepository {
   create(input: CreateStatsInput): Promise<Stats>;
   getLatestByType(type: string): Promise<Stats | null>;
+}
+
+export type EmailItem = DbEmailItem;
+
+export interface CreateEmailItemInput {
+  userId: string;
+  emailMessageId: string;
+  emailFrom: string;
+  link: string;
+  title?: string;
+  description?: string;
+}
+
+export interface UpdateEmailItemInput {
+  read?: boolean;
+  clicked?: boolean;
+}
+
+export interface EmailItemRepository {
+  create(input: CreateEmailItemInput): Promise<EmailItem>;
+  createMany(inputs: CreateEmailItemInput[]): Promise<EmailItem[]>;
+  findById(id: string): Promise<EmailItem | null>;
+  findByUserId(userId: string, limit?: number, offset?: number): Promise<EmailItem[]>;
+  findUnreadByUserId(userId: string, limit?: number, offset?: number): Promise<EmailItem[]>;
+  existsByUserMessageLink(userId: string, emailMessageId: string, link: string): Promise<boolean>;
+  findExistingLinks(userId: string, emailMessageId: string, links: string[]): Promise<string[]>;
+  update(id: string, input: UpdateEmailItemInput): Promise<EmailItem | null>;
+  delete(id: string): Promise<boolean>;
+  deleteOlderThan(userId: string, date: Date): Promise<number>;
+  markAllAsRead(userId: string): Promise<number>;
+}
+
+export interface EmailProcessorStatsData {
+  usersProcessed: number;
+  emailsParsed: number;
+  linksFound: number;
 }

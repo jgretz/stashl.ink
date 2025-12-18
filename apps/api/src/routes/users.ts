@@ -69,18 +69,49 @@ userRoutes.delete('/profile', async (c) => {
   }
 });
 
-// GET /api/users (admin only - for future use)
+// GET /api/users (admin only)
 userRoutes.get('/', async (c) => {
   try {
     const userService = new UserService();
     const users = await userService.getAllUsers();
-    
-    const usersWithoutPasswords = users.map(user => {
-      const {password, ...userWithoutPassword} = user;
-      return userWithoutPassword;
+
+    const usersWithoutPasswords = users.map((user) => {
+      const {password, gmailAccessToken, gmailRefreshToken, ...userWithoutSensitive} = user;
+      return userWithoutSensitive;
     });
 
     return c.json({users: usersWithoutPasswords});
+  } catch (error) {
+    throw error;
+  }
+});
+
+// PUT /api/users/:id (admin only - update specific user)
+userRoutes.put('/:id', async (c) => {
+  try {
+    const targetUserId = c.req.param('id');
+    const body = await c.req.json();
+    const {email, name, password, emailIntegrationEnabled, emailFilter} = body;
+
+    const updateData: Record<string, unknown> = {};
+    if (email !== undefined) updateData.email = email;
+    if (name !== undefined) updateData.name = name;
+    if (password !== undefined) updateData.password = password;
+    if (emailIntegrationEnabled !== undefined) updateData.emailIntegrationEnabled = emailIntegrationEnabled;
+    if (emailFilter !== undefined) updateData.emailFilter = emailFilter;
+
+    const userService = new UserService();
+    const updatedUser = await userService.updateUser(targetUserId, updateData);
+
+    if (!updatedUser) {
+      return c.json({error: 'User not found'}, 404);
+    }
+
+    const {password: _, gmailAccessToken, gmailRefreshToken, ...userWithoutSensitive} = updatedUser;
+    return c.json({
+      message: 'User updated successfully',
+      user: userWithoutSensitive,
+    });
   } catch (error) {
     throw error;
   }

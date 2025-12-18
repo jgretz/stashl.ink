@@ -22,6 +22,27 @@
       "when": 1765990094788,
       "tag": "0002_busy_butterfly",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1766000168985,
+      "tag": "0003_quiet_peter_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1766002779179,
+      "tag": "0004_oval_squadron_supreme",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1766073427704,
+      "tag": "0005_many_gunslinger",
+      "breakpoints": true
     }
   ]
 }

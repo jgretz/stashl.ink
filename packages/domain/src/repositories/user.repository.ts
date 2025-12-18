@@ -1,7 +1,7 @@
-import {eq} from 'drizzle-orm';
+import {eq, and, isNotNull} from 'drizzle-orm';
 import {getDb} from '../db/connection';
 import {users, type User, type NewUser} from '../db/schema';
-import type {UserRepository, CreateUserInput, UpdateUserInput} from '../types';
+import type {UserRepository, CreateUserInput, UpdateUserInput, UpdateGmailTokensInput} from '../types';
 
 export class DrizzleUserRepository implements UserRepository {
   async create(input: CreateUserInput): Promise<User> {
@@ -35,6 +35,20 @@ export class DrizzleUserRepository implements UserRepository {
   async findAll(): Promise<User[]> {
     const db = getDb();
     return await db.select().from(users);
+  }
+
+  async findAllWithEmailEnabled(): Promise<User[]> {
+    const db = getDb();
+    return await db
+      .select()
+      .from(users)
+      .where(
+        and(
+          eq(users.emailIntegrationEnabled, true),
+          isNotNull(users.gmailAccessToken),
+          isNotNull(users.gmailRefreshToken),
+        ),
+      );
   }
 
   async update(id: string, input: UpdateUserInput): Promise<User | null> {
@@ -96,7 +110,40 @@ export class DrizzleUserRepository implements UserRepository {
       })
       .where(eq(users.id, id))
       .returning();
-    
+
     return result.length > 0;
+  }
+
+  async updateGmailTokens(id: string, tokens: UpdateGmailTokensInput): Promise<User | null> {
+    const db = getDb();
+    const [user] = await db
+      .update(users)
+      .set({
+        gmailAccessToken: tokens.gmailAccessToken,
+        gmailRefreshToken: tokens.gmailRefreshToken,
+        gmailTokenExpiry: tokens.gmailTokenExpiry,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+
+    return user || null;
+  }
+
+  async clearGmailTokens(id: string): Promise<User | null> {
+    const db = getDb();
+    const [user] = await db
+      .update(users)
+      .set({
+        gmailAccessToken: null,
+        gmailRefreshToken: null,
+        gmailTokenExpiry: null,
+        emailIntegrationEnabled: false,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+
+    return user || null;
   }
 }

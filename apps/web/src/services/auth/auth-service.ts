@@ -6,6 +6,9 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  emailIntegrationEnabled: boolean;
+  emailFilter: string | null;
+  isAdmin: boolean;
   createdAt: string;
   updatedAt: string;
 }

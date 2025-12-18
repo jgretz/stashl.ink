@@ -1,18 +1,32 @@
-import type {RssFeedItem} from '@web/services/feeds';
-import {useMarkItemRead} from '@web/services/feeds';
+import type {EmailItem} from '@web/services/email';
+import {useMarkEmailItemRead} from '@web/services/email';
 import {useCreateLink} from '@web/services/links';
 import {Check, ExternalLink, Bookmark} from 'lucide-react';
 
-interface ReaderItemProps {
-  item: RssFeedItem;
+interface InboxItemProps {
+  item: EmailItem;
 }
 
-export function ReaderItem({item}: ReaderItemProps) {
-  const markReadMutation = useMarkItemRead();
+function extractDomain(url: string): string {
+  try {
+    const domain = new URL(url).hostname;
+    return domain.replace(/^www\./, '');
+  } catch {
+    return url;
+  }
+}
+
+function extractSenderName(emailFrom: string): string {
+  const match = emailFrom.match(/^([^<]+)</);
+  if (match) return match[1].trim();
+  return emailFrom.split('@')[0];
+}
+
+export function InboxItem({item}: InboxItemProps) {
+  const markReadMutation = useMarkEmailItemRead();
   const createLinkMutation = useCreateLink();
 
-  const formatDate = (date: string | null) => {
-    if (!date) return 'Unknown date';
+  const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -32,14 +46,16 @@ export function ReaderItem({item}: ReaderItemProps) {
     markReadMutation.mutate(item.id);
   };
 
+  const domain = extractDomain(item.link);
+
   const handleSaveLink = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     createLinkMutation.mutate(
       {
         url: item.link,
-        title: item.title,
-        description: item.summary || undefined,
+        title: item.title || domain,
+        description: item.description || undefined,
       },
       {
         onSuccess: () => {
@@ -48,6 +64,8 @@ export function ReaderItem({item}: ReaderItemProps) {
       },
     );
   };
+  const senderName = extractSenderName(item.emailFrom);
+  const displayTitle = item.title || domain;
 
   const ActionButtons = () => (
     <div className='flex items-center gap-3 md:gap-1'>
@@ -74,16 +92,9 @@ export function ReaderItem({item}: ReaderItemProps) {
     </div>
   );
 
-  const ImagePlaceholder = () => (
-    <div
-      className='w-20 h-20 md:w-32 md:h-32 shrink-0 bg-cover bg-center bg-amber-100'
-      style={item.imageUrl ? {backgroundImage: `url(${item.imageUrl})`} : undefined}
-    />
-  );
-
   const TextContent = () => (
     <div className='flex-1 min-w-0'>
-      <p className='text-xs font-medium text-teal-600 mb-1'>{item.feedTitle}</p>
+      <p className='text-xs font-medium text-teal-600 mb-1'>From: {senderName}</p>
       <a
         href={item.link}
         target='_blank'
@@ -92,14 +103,17 @@ export function ReaderItem({item}: ReaderItemProps) {
         className='group flex items-center gap-2'
       >
         <h3 className='text-lg font-medium text-teal-700 group-hover:text-orange-600 transition-colors line-clamp-2'>
-          {item.title}
+          {displayTitle}
         </h3>
         <ExternalLink className='h-4 w-4 shrink-0 text-teal-600 group-hover:text-orange-600' />
       </a>
 
-      {item.summary && <p className='text-amber-900 mt-2 line-clamp-3'>{item.summary}</p>}
+      {item.description && (
+        <p className='text-amber-900 mt-2 text-sm line-clamp-3'>{item.description}</p>
+      )}
 
-      <p className='text-xs text-amber-700 mt-3'>{formatDate(item.pubDate)}</p>
+      <p className='text-xs text-amber-700 mt-2 truncate'>{domain}</p>
+      <p className='text-xs text-amber-600 mt-1'>{formatDate(item.createdAt)}</p>
     </div>
   );
 
@@ -107,8 +121,7 @@ export function ReaderItem({item}: ReaderItemProps) {
     <div className='border border-amber-200 rounded-lg bg-amber-50 shadow-sm hover:shadow-md transition-all hover:border-amber-300 hover:bg-amber-100 overflow-hidden'>
       {/* Mobile layout */}
       <div className='md:hidden'>
-        <div className='flex items-center justify-between p-2'>
-          <ImagePlaceholder />
+        <div className='flex items-center justify-end p-2'>
           <ActionButtons />
         </div>
         <div className='px-4 pb-4'>
@@ -118,7 +131,6 @@ export function ReaderItem({item}: ReaderItemProps) {
 
       {/* Desktop layout */}
       <div className='hidden md:flex'>
-        <ImagePlaceholder />
         <div className='flex-1 p-4 flex items-start justify-between gap-4 min-w-0'>
           <TextContent />
           <ActionButtons />

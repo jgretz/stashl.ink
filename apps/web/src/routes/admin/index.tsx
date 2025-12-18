@@ -3,10 +3,14 @@ import {useEffect} from 'react';
 import {requireAuth, isAuthenticated} from '@web/services';
 import {AdminLayout} from '@web/components/layout/AdminLayout';
 import {TaskStatusWidget} from '@web/components/admin/TaskStatusWidget';
+import {EmailStatusWidget} from '@web/components/admin/EmailStatusWidget';
 
 export const Route = createFileRoute('/admin/')({
   beforeLoad: requireAuth,
   component: AdminDashboard,
+  head: () => ({
+    meta: [{title: 'Stashl.ink - Admin'}],
+  }),
 });
 
 function AdminDashboard() {
@@ -40,6 +44,7 @@ function AdminDashboard() {
 
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
           <TaskStatusWidget />
+          <EmailStatusWidget />
         </div>
       </div>
     </AdminLayout>

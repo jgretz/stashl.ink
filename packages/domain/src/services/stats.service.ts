@@ -4,6 +4,7 @@ import type {StatsRepository, Stats} from '../types';
 
 const STAT_TYPES = {
   TASK_RUNNER: 'task_runner',
+  EMAIL_PROCESSOR: 'email_processor',
 } as const;
 
 export class StatsService {
@@ -26,5 +27,16 @@ export class StatsService {
 
   async getLatestTaskRun(): Promise<Stats | null> {
     return await this.repository.getLatestByType(STAT_TYPES.TASK_RUNNER);
+  }
+
+  async recordEmailProcessorRun(usersProcessed: number, emailsParsed: number, linksFound: number): Promise<Stats> {
+    return await this.repository.create({
+      type: STAT_TYPES.EMAIL_PROCESSOR,
+      data: {usersProcessed, emailsParsed, linksFound},
+    });
+  }
+
+  async getLatestEmailProcessorRun(): Promise<Stats | null> {
+    return await this.repository.getLatestByType(STAT_TYPES.EMAIL_PROCESSOR);
   }
 }
