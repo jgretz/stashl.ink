@@ -67,22 +67,22 @@ export function AdminLayout({children}: AdminLayoutProps) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
+              <hr />
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <a href='/list'>
+                      <Home className='w-4 h-4' />
+                      <span>Main Site</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
 
         <SidebarFooter className='border-t border-sidebar-border'>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <a href='/list'>
-                  <Home className='w-4 h-4' />
-                  <span>Main Site</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-          <hr />
           <Button
             variant='ghost'
             onClick={handleLogout}

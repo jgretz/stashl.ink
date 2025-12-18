@@ -97,24 +97,24 @@ export function AuthenticatedLayout({children}: AuthenticatedLayoutProps) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
+              <hr />
+              <SidebarMenu>
+                {isAdmin && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <a href='/admin'>
+                        <Shield className='w-4 h-4' />
+                        <span>Admin</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
+              </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
 
         <SidebarFooter className='border-t border-sidebar-border'>
-          <SidebarMenu>
-            {isAdmin && (
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href='/admin'>
-                    <Shield className='w-4 h-4' />
-                    <span>Admin</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            )}
-          </SidebarMenu>
-          <hr />
           <Button
             variant='ghost'
             onClick={handleLogout}
