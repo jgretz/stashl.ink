@@ -9,7 +9,7 @@ export interface ParsedLink {
 const BLOCKED_DOMAINS = [
   'unsubscribe',
   'mailchimp.com',
-  'list-manage.com',
+  '/profile?', // list-manage.com profile/preferences links
   'twitter.com',
   'facebook.com',
   'instagram.com',
@@ -21,6 +21,20 @@ const BLOCKED_DOMAINS = [
   'hub.sparklp.co',
   'jobs.ashbyhq.com',
   'advertise.tldr.tech',
+  // Sponsor/ad domains
+  'warp.dev',
+  'semrush.com',
+  'wisprflow.ai',
+  'arcticwolf.com',
+  'firecrawl.link',
+  'zencoder.ai',
+  'pageai.pro',
+  'imaginex.video',
+  'stickertop.art',
+  'nmi.com',
+  'framer.link',
+  'fandfy',
+  'ngrok.com/blog/prompt-caching',
 ];
 
 const BLOCKED_TITLES = [
@@ -53,6 +67,28 @@ const BLOCKED_TITLES = [
   'subscribe',
   'comments',
   'agentfield',
+  // Call-to-action patterns
+  'test drive',
+  'claim your',
+  // Cross-promo newsletters
+  'money with katie',
+  'healthcare brew',
+  'cfo brew',
+  'pardon my take',
+  // Boilerplate/footer
+  'selection criteria',
+  'invest in devtools',
+  'a human',
+  'update subscription',
+  // Settings/preferences
+  'your settings',
+  'tags page',
+  'adjust your email',
+  'my preference',
+  // Promo/CTA
+  '% off',
+  'join today',
+  'your next adventure',
 ];
 
 const TRACKING_PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'mc_cid', 'mc_eid'];
@@ -64,6 +100,14 @@ function isBlockedUrl(url: string): boolean {
 
 function isBlockedTitle(title: string): boolean {
   const lowerTitle = title.toLowerCase().trim();
+  // Exact match for generic link text
+  if (lowerTitle === 'here') return true;
+  // Arrow CTAs like "Try now →"
+  if (title.includes('→')) return true;
+  // Titles starting with "try " (CTA pattern)
+  if (lowerTitle.startsWith('try ')) return true;
+  // Newsletter self-links with dates (e.g. "Tech / Daily - 2025.12.18")
+  if (/tech\s*\/\s*daily\s*-\s*\d{4}\.\d{2}\.\d{2}/i.test(title)) return true;
   if (BLOCKED_TITLES.some((blocked) => lowerTitle === blocked || lowerTitle.includes(blocked))) return true;
   if (lowerTitle.startsWith('http://') || lowerTitle.startsWith('https://')) return true;
   if (/^\s*⭐/.test(title)) return true;
@@ -97,6 +141,8 @@ function cleanText(text: string): string {
 function isValidTitle(title: string): boolean {
   if (!title || title.length < 3 || title.length > 500) return false;
   if (isBlockedTitle(title)) return false;
+  // Block very short single-word titles (likely fragments)
+  if (!title.includes(' ') && title.length < 5) return false;
   return true;
 }
 

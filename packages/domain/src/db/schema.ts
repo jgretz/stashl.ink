@@ -12,6 +12,7 @@ export const users = pgTable(
     resetTokenExpiry: timestamp('reset_token_expiry'),
     emailIntegrationEnabled: boolean('email_integration_enabled').default(false).notNull(),
     emailFilter: varchar('email_filter', {length: 500}),
+    isAdmin: boolean('is_admin').default(false).notNull(),
     gmailAccessToken: text('gmail_access_token'),
     gmailRefreshToken: text('gmail_refresh_token'),
     gmailTokenExpiry: timestamp('gmail_token_expiry'),

@@ -8,6 +8,7 @@ export interface User {
   name: string;
   emailIntegrationEnabled: boolean;
   emailFilter: string | null;
+  isAdmin: boolean;
   createdAt: string;
   updatedAt: string;
 }

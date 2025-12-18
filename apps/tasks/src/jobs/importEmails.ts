@@ -76,7 +76,10 @@ async function processUserEmails(
       const parsedLinks = parseLinksFromListFormat(message.htmlBody);
 
       if (parsedLinks.length > 0) {
-        const emailFrom = extractEmailAddress(message.from);
+        const subjectPreview = message.subject?.slice(0, 15) || '';
+        const emailFrom = subjectPreview
+          ? `${extractEmailAddress(message.from)} (${subjectPreview})`
+          : extractEmailAddress(message.from);
         const items = parsedLinks.map((parsed: ParsedLink) => ({
           emailMessageId: messageId,
           emailFrom,

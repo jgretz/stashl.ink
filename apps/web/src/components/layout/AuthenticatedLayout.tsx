@@ -1,5 +1,5 @@
 import {useRouter} from '@tanstack/react-router';
-import {Link, Rss, BookOpen, Mail, Settings} from 'lucide-react';
+import {Link, Rss, BookOpen, Mail, Settings, Shield} from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +17,7 @@ import {
 import {Separator} from '@web/components/ui/separator';
 import {clearAuthToken} from '@web/services';
 import {useEmailSettings} from '@web/services/email';
+import {useUserProfile} from '@web/services/users';
 import {Mascot} from '@web/components/Mascot';
 import {Button} from '@web/components/ui/button';
 
@@ -27,7 +28,9 @@ interface AuthenticatedLayoutProps {
 export function AuthenticatedLayout({children}: AuthenticatedLayoutProps) {
   const router = useRouter();
   const {data: emailSettings} = useEmailSettings();
+  const {data: userProfile} = useUserProfile();
   const showInbox = emailSettings?.emailIntegrationEnabled ?? false;
+  const isAdmin = userProfile?.user?.isAdmin ?? false;
 
   const handleLogout = () => {
     clearAuthToken();
@@ -99,6 +102,19 @@ export function AuthenticatedLayout({children}: AuthenticatedLayoutProps) {
         </SidebarContent>
 
         <SidebarFooter className='border-t border-sidebar-border'>
+          <SidebarMenu>
+            {isAdmin && (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href='/admin'>
+                    <Shield className='w-4 h-4' />
+                    <span>Admin</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
+          </SidebarMenu>
+          <hr />
           <Button
             variant='ghost'
             onClick={handleLogout}

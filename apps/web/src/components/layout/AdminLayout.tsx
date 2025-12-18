@@ -1,5 +1,5 @@
 import {useRouter} from '@tanstack/react-router';
-import {LayoutDashboard, Users} from 'lucide-react';
+import {LayoutDashboard, Users, Home} from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -72,6 +72,17 @@ export function AdminLayout({children}: AdminLayoutProps) {
         </SidebarContent>
 
         <SidebarFooter className='border-t border-sidebar-border'>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href='/list'>
+                  <Home className='w-4 h-4' />
+                  <span>Main Site</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          <hr />
           <Button
             variant='ghost'
             onClick={handleLogout}

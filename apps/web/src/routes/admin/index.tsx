@@ -8,6 +8,9 @@ import {EmailStatusWidget} from '@web/components/admin/EmailStatusWidget';
 export const Route = createFileRoute('/admin/')({
   beforeLoad: requireAuth,
   component: AdminDashboard,
+  head: () => ({
+    meta: [{title: 'Stashl.ink - Admin'}],
+  }),
 });
 
 function AdminDashboard() {
