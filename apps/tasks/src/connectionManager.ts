@@ -1,11 +1,11 @@
 import PgBoss from 'pg-boss';
-import {initializeServices} from '@stashl/domain/src/services';
 import {
-  startFlyProxy,
-  stopFlyProxy,
-  restartFlyProxy,
-  isFlyProxyEnabled,
-} from './flyProxy';
+  ensureDockerPostgres,
+  waitForReady,
+  getPgBossConnectionString,
+  stopDockerPostgres,
+} from './dockerPostgres';
+import {disconnectFromStashl} from './stashlConnection';
 
 interface ConnectionConfig {
   retryIntervalMs: number;
@@ -14,7 +14,7 @@ interface ConnectionConfig {
 
 function getConfig(): ConnectionConfig {
   return {
-    retryIntervalMs: parseInt(process.env.RETRY_INTERVAL_MS || '120000', 10),
+    retryIntervalMs: parseInt(process.env.RETRY_INTERVAL_MS || '30000', 10),
     maxRetries: parseInt(process.env.MAX_RETRIES || '0', 10), // 0 = infinite
   };
 }
@@ -31,7 +31,6 @@ export interface TaskRunnerContext {
 export type SetupCallback = (boss: PgBoss) => Promise<void>;
 
 export async function createTaskRunner(
-  databaseUrl: string,
   setupCallback: SetupCallback
 ): Promise<TaskRunnerContext> {
   const config = getConfig();
@@ -39,13 +38,15 @@ export async function createTaskRunner(
   let isShuttingDown = false;
 
   async function attemptConnection(): Promise<PgBoss> {
-    console.log('🔄 Attempting database connection...');
+    console.log('🔄 Starting local pg-boss database...');
 
-    initializeServices();
-    console.log('✅ Domain services initialized');
+    await ensureDockerPostgres();
+    await waitForReady();
+    console.log('✅ Docker postgres ready');
 
+    const pgBossUrl = getPgBossConnectionString();
     const boss = new PgBoss({
-      connectionString: databaseUrl,
+      connectionString: pgBossUrl,
       retryLimit: 3,
       retryDelay: 1000,
       retryBackoff: true,
@@ -54,7 +55,7 @@ export async function createTaskRunner(
     });
 
     await boss.start();
-    console.log('✅ pg-boss started');
+    console.log('✅ pg-boss started on local Docker postgres');
 
     return boss;
   }
@@ -62,11 +63,6 @@ export async function createTaskRunner(
   async function runWithRecovery(): Promise<TaskRunnerContext> {
     while (true) {
       try {
-        if (isFlyProxyEnabled()) {
-          await startFlyProxy();
-          await sleep(2000);
-        }
-
         const boss = await attemptConnection();
         await setupCallback(boss);
 
@@ -103,7 +99,8 @@ export async function createTaskRunner(
           } catch {
             // Ignore
           }
-          await stopFlyProxy();
+          await disconnectFromStashl();
+          // Note: Don't stop Docker postgres on normal shutdown for fast restart
         };
 
         return {boss, shutdown};
@@ -122,11 +119,6 @@ export async function createTaskRunner(
         console.error(`❌ Connection failed ${retryMsg}:`, error);
         console.log(`⏳ Waiting ${config.retryIntervalMs / 1000}s before retry...`);
 
-        if (isFlyProxyEnabled()) {
-          console.log('🔄 Restarting fly proxy...');
-          await restartFlyProxy();
-        }
-
         await sleep(config.retryIntervalMs);
       }
     }
@@ -136,14 +128,13 @@ export async function createTaskRunner(
 }
 
 export async function runWithAutoRecovery(
-  databaseUrl: string,
   setupCallback: SetupCallback
 ): Promise<never> {
   const config = getConfig();
 
   while (true) {
     try {
-      const {boss, shutdown} = await createTaskRunner(databaseUrl, setupCallback);
+      const {boss, shutdown} = await createTaskRunner(setupCallback);
 
       process.removeAllListeners('SIGTERM');
       process.removeAllListeners('SIGINT');
@@ -173,10 +164,6 @@ export async function runWithAutoRecovery(
     } catch (error) {
       console.error('❌ Task runner crashed:', error);
       console.log(`⏳ Waiting ${config.retryIntervalMs / 1000}s before full restart...`);
-
-      if (isFlyProxyEnabled()) {
-        await restartFlyProxy();
-      }
 
       await sleep(config.retryIntervalMs);
     }

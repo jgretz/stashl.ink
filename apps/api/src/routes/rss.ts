@@ -1,5 +1,6 @@
 import {Hono} from 'hono';
 import {RssFeedService} from '@stashl/domain/src/services/rssFeed.service';
+import {sendTaskMessage} from '../taskSocket';
 
 export const rssRoutes = new Hono();
 
@@ -184,15 +185,14 @@ rssRoutes.post('/feeds/import-all', async (c) => {
       return c.json({message: 'No feeds to import', count: 0});
     }
 
-    const {getJobQueue} = await import('../jobQueue');
-    const boss = getJobQueue();
-    if (boss) {
-      for (const feed of feeds) {
-        await boss.send('import-feed', {feedId: feed.id, feedUrl: feed.feedUrl});
-      }
+    const sent = sendTaskMessage({
+      type: 'import-all-feeds',
+      payload: {feeds: feeds.map((f) => ({feedId: f.id, feedUrl: f.feedUrl}))},
+    });
+    if (sent) {
       return c.json({message: `Queued ${feeds.length} feed imports`, count: feeds.length});
     } else {
-      return c.json({error: 'Job queue not available'}, 503);
+      return c.json({error: 'Task service not connected'}, 503);
     }
   } catch (error) {
     throw error;
@@ -215,14 +215,14 @@ rssRoutes.post('/feeds/:id/import', async (c) => {
       return c.json({error: 'Unauthorized'}, 403);
     }
 
-    // Queue import task via pg-boss
-    const {getJobQueue} = await import('../jobQueue');
-    const boss = getJobQueue();
-    if (boss) {
-      await boss.send('import-feed', {feedId, feedUrl: feed.feedUrl});
+    const sent = sendTaskMessage({
+      type: 'import-feed',
+      payload: {feedId, feedUrl: feed.feedUrl},
+    });
+    if (sent) {
       return c.json({message: 'Import queued', feedId});
     } else {
-      return c.json({error: 'Job queue not available'}, 503);
+      return c.json({error: 'Task service not connected'}, 503);
     }
   } catch (error) {
     throw error;

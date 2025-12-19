@@ -15,7 +15,8 @@
       "Bash(docker build:*)",
       "Bash(timeout:*)",
       "Bash(gtimeout:*)",
-      "Bash(bun remove:*)"
+      "Bash(bun remove:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

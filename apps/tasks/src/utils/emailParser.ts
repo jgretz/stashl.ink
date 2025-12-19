@@ -35,6 +35,10 @@ const BLOCKED_DOMAINS = [
   'framer.link',
   'fandfy',
   'ngrok.com/blog/prompt-caching',
+  'paypal.me',
+  'algolia.com/resources',
+  'bluesky.app', // social
+  'bsky.app', // social
 ];
 
 const BLOCKED_TITLES = [
@@ -89,9 +93,140 @@ const BLOCKED_TITLES = [
   '% off',
   'join today',
   'your next adventure',
+  // View online variants
+  'read online',
+  'web version',
+  // Footer/credits
+  'email service by',
+  'powered by',
+  // Generic link text
+  'details here',
+  'direct message on',
+  'via chat on',
+  // Newsletter cross-promo
+  'brain food',
+  'delivered daily',
+  'newsletters for you',
+  'buy a classified',
+  'get the ebook',
+  // Product announcements (promo)
+  'product updates',
+  'check out',
+  // Social sharing buttons
+  'twitter',
+  'instapaper',
+  'pocket',
+  // Boilerplate
+  'why did i get this',
+  'add us to your safe list',
+  'recommend this newsletter',
+  'read this issue online',
+  // Promo with pricing
+  'free credit',
+  'free trial',
+  // Referral/share
+  'gift a classified',
+  'share with a friend',
+  // Subscription/support
+  'patron',
+  'patreon',
+  'support us',
+  'buy me a coffee',
+  // Ad CTAs
+  'get the free',
+  'access the',
+  'see modern',
+  'join free',
+  'read online',
+  // Social
+  'x / twitter',
+  'apple podcasts',
 ];
 
 const TRACKING_PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'mc_cid', 'mc_eid'];
+
+// Structural regions to skip (headers, footers, sponsors, ads)
+const SKIP_SELECTORS = [
+  // Header/meta regions
+  '.el-splitbar', '#preview', '.preheader',
+  // Sponsor regions
+  '.norss', '#together', '[class*="sponsor"]',
+  // Ad regions (beehiiv/techpresso style)
+  '[id*="-ad-"]', '[id*="ad-block"]',
+  '[data-ad-link]', '[data-ad-role]',
+  // Ads/classifieds
+  '.classifieds', '[class*="classified"]',
+  // Footer regions
+  '#footer', '.noarchive', '.footer',
+  '[class*="unsubscribe"]', '[class*="preferences"]',
+];
+
+function isInSkipRegion($el: ReturnType<cheerio.CheerioAPI>, $: cheerio.CheerioAPI): boolean {
+  return SKIP_SELECTORS.some((sel) => $el.closest(sel).length > 0);
+}
+
+function scoreLinkQuality(
+  $anchor: ReturnType<cheerio.CheerioAPI>,
+  $: cheerio.CheerioAPI,
+  title: string,
+  positionRatio: number
+): number {
+  let score = 0;
+
+  // Title quality: meaningful length
+  if (title.length >= 10 && title.length <= 100) score += 2;
+
+  // Generic link text penalty
+  const lowerTitle = title.toLowerCase().trim();
+  if (lowerTitle === 'link' || lowerTitle === 'here' || lowerTitle === 'click') score -= 5;
+
+  // Author attribution nearby
+  const $parent = $anchor.parent();
+  const siblingText = $parent.text().toLowerCase();
+  if (/by\s|author|written/i.test(siblingText)) score += 1;
+
+  // Sponsor detection in ancestors (class names)
+  const ancestorClasses = $anchor
+    .parents()
+    .map((_, el) => $(el).attr('class') || '')
+    .get()
+    .join(' ')
+    .toLowerCase();
+  if (ancestorClasses.includes('sponsor')) score -= 5;
+
+  // Ad detection via data attributes
+  if ($anchor.attr('data-ad-link') || $anchor.attr('data-ad-role')) score -= 5;
+
+  // Ad detection via ancestor IDs
+  const ancestorIds = $anchor
+    .parents()
+    .map((_, el) => $(el).attr('id') || '')
+    .get()
+    .join(' ')
+    .toLowerCase();
+  if (/-ad-|ad-block|sponsor/.test(ancestorIds)) score -= 5;
+
+  // Sponsor detection in container (check td/tr/table parent for sponsor text/class)
+  const $container = $anchor.closest('td, tr, table');
+  const containerText = $container.text().toLowerCase();
+  const containerHtml = $container.html()?.toLowerCase() || '';
+  if (containerText.includes('sponsor') || containerHtml.includes('tag-sponsor')) score -= 5;
+
+  // Partner/ad section detection
+  if (/from our partner|together with|advertisement/i.test(containerText)) score -= 5;
+
+  // Position penalty (last 25% of doc likely footer)
+  if (positionRatio > 0.75) score -= 1;
+
+  // CTA patterns in title
+  if (/^(try|book|claim|get|start)\s/i.test(title)) score -= 2;
+
+  // Minimal context = probably navigation
+  const parentTextLen = $parent.text().trim().length;
+  if (parentTextLen < 30) score -= 1;
+
+  return score;
+}
 
 function isBlockedUrl(url: string): boolean {
   const lowerUrl = url.toLowerCase();
@@ -112,6 +247,12 @@ function isBlockedTitle(title: string): boolean {
   if (lowerTitle.startsWith('http://') || lowerTitle.startsWith('https://')) return true;
   if (/^\s*⭐/.test(title)) return true;
   if (/\(sponsor\)\s*$/i.test(title)) return true;
+  // Block titles that look like bare domain names (e.g. "webtoolsweekly.com")
+  if (/^[a-z0-9-]+\.[a-z]{2,}$/i.test(lowerTitle)) return true;
+  // Block emoji-only or emoji-prefixed promotional titles
+  if (/^[\u{1F300}-\u{1F9FF}]/u.test(title)) return true;
+  // Block social handles (e.g. "@username")
+  if (/^@[a-z0-9_]+$/i.test(lowerTitle)) return true;
   return false;
 }
 
@@ -149,11 +290,16 @@ function isValidTitle(title: string): boolean {
 export function parseLinksFromHtml(html: string): ParsedLink[] {
   const $ = cheerio.load(html);
   const results: Map<string, ParsedLink> = new Map();
+  const allAnchors = $('a[href]');
+  const totalAnchors = allAnchors.length;
 
-  $('a[href]').each((_, element) => {
+  allAnchors.each((index, element) => {
     const $el = $(element);
-    const href = $el.attr('href');
 
+    // Skip if in excluded structural region
+    if (isInSkipRegion($el, $)) return;
+
+    const href = $el.attr('href');
     if (!href || !href.startsWith('http')) return;
     if (isBlockedUrl(href)) return;
 
@@ -162,6 +308,11 @@ export function parseLinksFromHtml(html: string): ParsedLink[] {
 
     const title = cleanText($el.text());
     if (!isValidTitle(title)) return;
+
+    // Score this link for quality
+    const positionRatio = totalAnchors > 0 ? index / totalAnchors : 0;
+    const score = scoreLinkQuality($el, $, title, positionRatio);
+    if (score < 2) return;
 
     // Try to find description from surrounding context
     let description: string | undefined;
@@ -189,12 +340,17 @@ export function parseLinksFromHtml(html: string): ParsedLink[] {
 export function parseLinksFromListFormat(html: string): ParsedLink[] {
   const $ = cheerio.load(html);
   const results: Map<string, ParsedLink> = new Map();
+  const allListItems = $('li');
+  const totalItems = allListItems.length;
 
   // First try list items (newsletters like TLDR)
-  $('li').each((_, li) => {
+  allListItems.each((index, li) => {
     const $li = $(li);
-    const $anchor = $li.find('a[href]').first();
 
+    // Skip if in excluded structural region
+    if (isInSkipRegion($li, $)) return;
+
+    const $anchor = $li.find('a[href]').first();
     if (!$anchor.length) return;
 
     const href = $anchor.attr('href');
@@ -206,6 +362,11 @@ export function parseLinksFromListFormat(html: string): ParsedLink[] {
 
     const title = cleanText($anchor.text());
     if (!isValidTitle(title)) return;
+
+    // Score this link for quality
+    const positionRatio = totalItems > 0 ? index / totalItems : 0;
+    const score = scoreLinkQuality($anchor, $, title, positionRatio);
+    if (score < 2) return;
 
     // Get description from remaining li content
     const liText = cleanText($li.text());
@@ -230,8 +391,16 @@ export function parseLinksFromListFormat(html: string): ParsedLink[] {
   }
 
   // Try paragraphs with links (newsletters like ui.dev, buttondown)
-  $('p, div, td').each((_, container) => {
+  const allContainers = $('p, div, td');
+  const totalContainers = allContainers.length;
+  let containerIndex = 0;
+
+  allContainers.each((_, container) => {
     const $container = $(container);
+    containerIndex++;
+
+    // Skip if in excluded structural region
+    if (isInSkipRegion($container, $)) return;
 
     // Skip if this is a deeply nested container
     if ($container.find('p, div, td').length > 0) return;
@@ -248,6 +417,11 @@ export function parseLinksFromListFormat(html: string): ParsedLink[] {
 
       const title = cleanText($anchor.text());
       if (!isValidTitle(title)) return;
+
+      // Score this link for quality
+      const positionRatio = totalContainers > 0 ? containerIndex / totalContainers : 0;
+      const score = scoreLinkQuality($anchor, $, title, positionRatio);
+      if (score < 2) return;
 
       // Get context from container
       const containerText = cleanText($container.text());

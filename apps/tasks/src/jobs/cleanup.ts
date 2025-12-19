@@ -1,13 +1,14 @@
 import type PgBoss from 'pg-boss';
 import {RssFeedService} from '@stashl/domain/src/services/rssFeed.service';
 import {EmailService} from '@stashl/domain/src/services/email.service';
+import {withStashlConnection} from '../stashlConnection';
 
 const DAYS_OLD = 30;
 
 export async function cleanupHandler(_jobs: PgBoss.Job[]) {
   console.log('Running daily cleanup...');
 
-  try {
+  await withStashlConnection(async () => {
     // Cleanup RSS feed items
     const rssFeedService = new RssFeedService();
     const feeds = await rssFeedService.getAllFeeds();
@@ -37,8 +38,5 @@ export async function cleanupHandler(_jobs: PgBoss.Job[]) {
     console.log(
       `Cleanup complete: removed ${totalFeedItemsDeleted} feed items from ${feeds.length} feeds, ${totalEmailItemsDeleted} email items from ${users.length} users`,
     );
-  } catch (error) {
-    console.error('Cleanup failed:', error);
-    throw error;
-  }
+  });
 }

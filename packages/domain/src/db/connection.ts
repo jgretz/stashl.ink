@@ -11,10 +11,17 @@ export function initializeDatabase(connectionString?: string): void {
     throw new Error('DATABASE_URL environment variable is not set');
   }
 
+  // Close existing connection if reinitializing
+  if (sql) {
+    sql.end().catch(() => {});
+    sql = null;
+    db = null;
+  }
+
   sql = postgres(databaseUrl, {
     max: 10,
-    idle_timeout: 20,
-    connect_timeout: 10,
+    idle_timeout: 300,
+    connect_timeout: 30,
   });
 
   db = drizzle(sql, {schema});

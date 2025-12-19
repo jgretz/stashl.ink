@@ -8,7 +8,12 @@ import {rssRoutes} from './routes/rss';
 import {statsRoutes} from './routes/stats';
 import {emailRoutes} from './routes/email';
 import {authMiddleware} from './middleware/auth';
-import {initializeJobQueue} from './jobQueue';
+import {
+  handleTaskWebSocket,
+  handleTaskWebSocketClose,
+  handleTaskWebSocketMessage,
+  validateTaskApiKey,
+} from './taskSocket';
 
 const app = new Hono();
 
@@ -52,11 +57,6 @@ try {
   process.exit(1);
 }
 
-// Initialize the job queue (for manual RSS import triggers)
-initializeJobQueue().catch((error) => {
-  console.error('❌ Failed to initialize job queue:', error.message);
-});
-
 // Health check endpoint
 app.get('/ping', (c) =>
   c.json({
@@ -88,6 +88,7 @@ app.route('/api/stats', statsRoutes);
 app.use('/api/email/settings', authMiddleware());
 app.use('/api/email/disconnect', authMiddleware());
 app.use('/api/email/oauth/url', authMiddleware());
+app.use('/api/email/refresh', authMiddleware());
 app.use('/api/email/items/*', authMiddleware());
 app.use('/api/email/items', authMiddleware());
 app.route('/api/email', emailRoutes);
@@ -120,5 +121,32 @@ app.onError((err, c) => {
 
 export default {
   port: process.env.API_PORT || 3001,
-  fetch: app.fetch,
+  fetch(req: Request, server: any) {
+    // Handle WebSocket upgrade for tasks connection
+    const url = new URL(req.url);
+    if (url.pathname === '/api/tasks/ws') {
+      const key = url.searchParams.get('key');
+      if (!validateTaskApiKey(key)) {
+        return new Response('Unauthorized', {status: 401});
+      }
+      const upgraded = server.upgrade(req);
+      if (!upgraded) {
+        return new Response('WebSocket upgrade failed', {status: 500});
+      }
+      return undefined;
+    }
+
+    return app.fetch(req, server);
+  },
+  websocket: {
+    open(ws: any) {
+      handleTaskWebSocket(ws);
+    },
+    message(ws: any, message: string | Buffer) {
+      handleTaskWebSocketMessage(message);
+    },
+    close() {
+      handleTaskWebSocketClose();
+    },
+  },
 };

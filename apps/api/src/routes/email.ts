@@ -1,6 +1,7 @@
 import {Hono} from 'hono';
 import {google} from 'googleapis';
 import {EmailService} from '@stashl/domain/src/services/email.service';
+import {sendTaskMessage} from '../taskSocket';
 
 export const emailRoutes = new Hono();
 
@@ -184,16 +185,18 @@ emailRoutes.post('/items/mark-all-read', async (c) => {
   }
 });
 
-// POST /api/email/refresh - Trigger email import
+// POST /api/email/refresh - Trigger email import for current user
 emailRoutes.post('/refresh', async (c) => {
   try {
-    const {getJobQueue} = await import('../jobQueue');
-    const boss = getJobQueue();
-    if (boss) {
-      await boss.send('import-emails', {});
+    const {userId} = c.get('user');
+    const sent = sendTaskMessage({
+      type: 'import-emails',
+      payload: {userId},
+    });
+    if (sent) {
       return c.json({message: 'Email import queued'});
     } else {
-      return c.json({error: 'Job queue not available'}, 503);
+      return c.json({error: 'Task service not connected'}, 503);
     }
   } catch (error) {
     throw error;

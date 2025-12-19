@@ -4,6 +4,9 @@ import {scheduleFeedsHandler} from './jobs/scheduleFeeds';
 import {importFeedHandler} from './jobs/importFeed';
 import {cleanupHandler} from './jobs/cleanup';
 import {importEmailsHandler} from './jobs/importEmails';
+import {startApiConnection} from './apiConnection';
+
+const BATCH_SIZE = 50;
 
 async function setupWorkers(boss: PgBoss): Promise<void> {
   await boss.createQueue('schedule-feed-imports');
@@ -24,8 +27,8 @@ async function setupWorkers(boss: PgBoss): Promise<void> {
   await boss.work('schedule-feed-imports', scheduleFeedsHandler(boss));
   console.log('👷 Worker registered: schedule-feed-imports');
 
-  await boss.work('import-feed', importFeedHandler);
-  console.log('👷 Worker registered: import-feed');
+  await boss.work('import-feed', {batchSize: BATCH_SIZE}, importFeedHandler);
+  console.log(`👷 Worker registered: import-feed (batch size: ${BATCH_SIZE})`);
 
   await boss.work('cleanup-old-items', cleanupHandler);
   console.log('👷 Worker registered: cleanup-old-items');
@@ -33,19 +36,22 @@ async function setupWorkers(boss: PgBoss): Promise<void> {
   await boss.work('import-emails', importEmailsHandler());
   console.log('👷 Worker registered: import-emails');
 
+  // Start WebSocket connection to API for ad-hoc task messages
+  startApiConnection(boss);
+
   console.log('✅ Task runner started successfully');
 }
 
 async function main(): Promise<void> {
   console.log('Starting Stashl Task Runner...');
 
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
+  // DATABASE_URL still required for stashl connection during job execution
+  if (!process.env.DATABASE_URL) {
     console.error('❌ DATABASE_URL environment variable is required');
     process.exit(1);
   }
 
-  await runWithAutoRecovery(databaseUrl, setupWorkers);
+  await runWithAutoRecovery(setupWorkers);
 }
 
 main().catch((error) => {

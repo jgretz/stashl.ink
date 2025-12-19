@@ -1,10 +1,17 @@
+import type PgBoss from 'pg-boss';
 import {EmailService} from '@stashl/domain/src/services/email.service';
+import {UserService} from '@stashl/domain/src/services/user.service';
 import {GmailClient, extractEmailAddress} from '../utils/gmailClient';
 import {parseLinksFromListFormat, type ParsedLink} from '../utils/emailParser';
 import type {User} from '@stashl/domain/src/types';
+import {withStashlConnection} from '../stashlConnection';
 
 const API_URL = process.env.API_URL;
 const TASK_API_KEY = process.env.TASK_API_KEY;
+
+interface ImportEmailsJob {
+  userId?: string; // Optional - if not provided, process all users
+}
 
 async function reportEmailStats(usersProcessed: number, emailsParsed: number, linksFound: number): Promise<void> {
   if (!TASK_API_KEY) {
@@ -106,33 +113,50 @@ async function processUserEmails(
 }
 
 export function importEmailsHandler() {
-  return async function () {
-    console.log('Running scheduled email import...');
+  return async function (jobs: PgBoss.Job<ImportEmailsJob>[]) {
+    // Take first job's data (batch usually contains one job)
+    const job = jobs[0];
+    const {userId} = job?.data || {};
+    const isAdHoc = !!userId;
+
+    console.log(isAdHoc ? `Running ad-hoc email import for user ${userId}...` : 'Running scheduled email import...');
 
     let usersProcessed = 0;
     let totalEmailsParsed = 0;
     let totalLinksFound = 0;
 
     try {
-      const emailService = new EmailService();
-      const users = await emailService.getUsersWithEmailEnabled();
+      await withStashlConnection(async () => {
+        const emailService = new EmailService();
+        const userService = new UserService();
 
-      console.log(`Found ${users.length} users with email integration enabled`);
-
-      for (const user of users) {
-        try {
-          const result = await processUserEmails(user, emailService);
-          usersProcessed++;
-          totalEmailsParsed += result.emailCount;
-          totalLinksFound += result.linkCount;
-        } catch (error) {
-          console.error(`Failed to process emails for user ${user.id}:`, error);
+        let users: User[];
+        if (userId) {
+          // Ad-hoc: process single user
+          const user = await userService.getUserById(userId);
+          users = user ? [user] : [];
+        } else {
+          // Scheduled: process all users with email enabled
+          users = await emailService.getUsersWithEmailEnabled();
         }
-      }
 
-      console.log(
-        `Email import complete: ${usersProcessed} users, ${totalEmailsParsed} emails, ${totalLinksFound} links`,
-      );
+        console.log(`Found ${users.length} users to process`);
+
+        for (const user of users) {
+          try {
+            const result = await processUserEmails(user, emailService);
+            usersProcessed++;
+            totalEmailsParsed += result.emailCount;
+            totalLinksFound += result.linkCount;
+          } catch (error) {
+            console.error(`Failed to process emails for user ${user.id}:`, error);
+          }
+        }
+
+        console.log(
+          `Email import complete: ${usersProcessed} users, ${totalEmailsParsed} emails, ${totalLinksFound} links`,
+        );
+      });
     } catch (error) {
       console.error('Failed to run email import:', error);
       throw error;

@@ -1,5 +1,6 @@
 import type PgBoss from 'pg-boss';
 import {RssFeedService} from '@stashl/domain/src/services/rssFeed.service';
+import {withStashlConnection} from '../stashlConnection';
 
 const API_URL = process.env.API_URL;
 const TASK_API_KEY = process.env.TASK_API_KEY;
@@ -43,19 +44,21 @@ export function scheduleFeedsHandler(boss: PgBoss) {
     let failCount = 0;
 
     try {
-      const service = new RssFeedService();
-      const feeds = await service.getAllFeeds();
+      await withStashlConnection(async () => {
+        const service = new RssFeedService();
+        const feeds = await service.getAllFeeds();
 
-      for (const feed of feeds) {
-        try {
-          await boss.send('import-feed', {feedId: feed.id, feedUrl: feed.feedUrl});
-          successCount++;
-        } catch {
-          failCount++;
+        for (const feed of feeds) {
+          try {
+            await boss.send('import-feed', {feedId: feed.id, feedUrl: feed.feedUrl});
+            successCount++;
+          } catch {
+            failCount++;
+          }
         }
-      }
 
-      console.log(`Queued ${feeds.length} feeds for import`);
+        console.log(`Queued ${feeds.length} feeds for import`);
+      });
     } catch (error) {
       console.error('Failed to queue feed imports:', error);
       failCount++;
