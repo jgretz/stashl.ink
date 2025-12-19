@@ -14,13 +14,38 @@ let boss: PgBoss | null = null;
 let reconnectAttempts = 0;
 let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 let isShuttingDown = false;
+let healthCheckInterval: ReturnType<typeof setInterval> | null = null;
+let lastMessageTime = Date.now();
 
 const MAX_RECONNECT_DELAY = 30000;
 const BASE_RECONNECT_DELAY = 1000;
+const HEALTH_CHECK_INTERVAL = 30000;
+const HEALTH_CHECK_TIMEOUT = 60000;
 
 function getReconnectDelay(): number {
   const delay = Math.min(BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts), MAX_RECONNECT_DELAY);
   return delay + Math.random() * 1000; // Add jitter
+}
+
+function stopHealthCheck(): void {
+  if (healthCheckInterval) {
+    clearInterval(healthCheckInterval);
+    healthCheckInterval = null;
+  }
+}
+
+function startHealthCheck(): void {
+  stopHealthCheck();
+
+  healthCheckInterval = setInterval(() => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+    // If no message received in timeout period, consider connection dead
+    if (Date.now() - lastMessageTime > HEALTH_CHECK_TIMEOUT) {
+      console.log('⚠️ WebSocket health check failed, reconnecting...');
+      ws.close();
+    }
+  }, HEALTH_CHECK_INTERVAL);
 }
 
 function getWebSocketUrl(): string {
@@ -87,9 +112,12 @@ function connect(): void {
     ws.onopen = () => {
       console.log('✅ Connected to API WebSocket');
       reconnectAttempts = 0;
+      lastMessageTime = Date.now();
+      startHealthCheck();
     };
 
     ws.onmessage = (event) => {
+      lastMessageTime = Date.now();
       const data = typeof event.data === 'string' ? event.data : event.data.toString();
 
       // Handle ping from server
@@ -102,10 +130,12 @@ function connect(): void {
     };
 
     ws.onclose = () => {
+      stopHealthCheck();
+      ws = null;
+
       if (isShuttingDown) return;
 
       console.log('🔌 Disconnected from API WebSocket');
-      ws = null;
       scheduleReconnect();
     };
 
@@ -137,12 +167,36 @@ export function startApiConnection(pgBoss: PgBoss): void {
     return;
   }
 
+  // Reset state for fresh start
+  isShuttingDown = false;
+  reconnectAttempts = 0;
+  lastMessageTime = Date.now();
+
+  if (reconnectTimeout) {
+    clearTimeout(reconnectTimeout);
+    reconnectTimeout = null;
+  }
+
+  stopHealthCheck();
+
+  // Close any existing connection
+  if (ws) {
+    try {
+      ws.close();
+    } catch {
+      // Ignore
+    }
+    ws = null;
+  }
+
   boss = pgBoss;
   connect();
 }
 
 export function stopApiConnection(): void {
   isShuttingDown = true;
+
+  stopHealthCheck();
 
   if (reconnectTimeout) {
     clearTimeout(reconnectTimeout);

@@ -1,4 +1,4 @@
-import {spawn, ChildProcess} from 'child_process';
+import {spawn, ChildProcess, execSync} from 'child_process';
 
 interface FlyProxyConfig {
   port: number;
@@ -15,6 +15,24 @@ function getConfig(): FlyProxyConfig {
     appName: process.env.FLY_PROXY_APP || 'stashl-db',
     enabled: process.env.FLY_PROXY_DISABLED !== 'true',
   };
+}
+
+function isPortInUse(port: number): boolean {
+  try {
+    const result = execSync(`lsof -ti:${port} 2>/dev/null`, {encoding: 'utf-8'});
+    return result.trim().length > 0;
+  } catch {
+    return false;
+  }
+}
+
+function killProcessOnPort(port: number): void {
+  try {
+    execSync(`lsof -ti:${port} | xargs kill -9 2>/dev/null`, {encoding: 'utf-8'});
+    console.log(`🔌 Killed existing process on port ${port}`);
+  } catch {
+    // No process to kill or kill failed
+  }
 }
 
 export function isFlyProxyEnabled(): boolean {
@@ -34,6 +52,12 @@ export function startFlyProxy(): Promise<void> {
       console.log('🔌 Fly proxy already running');
       resolve();
       return;
+    }
+
+    // Check for and kill any orphaned process on the port
+    if (isPortInUse(config.port)) {
+      console.log(`🔌 Port ${config.port} in use, killing existing process...`);
+      killProcessOnPort(config.port);
     }
 
     console.log(`🔌 Starting fly proxy on port ${config.port} for app ${config.appName}...`);

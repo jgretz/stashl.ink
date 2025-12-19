@@ -44,6 +44,27 @@ function containerExists(containerName: string): boolean {
   }
 }
 
+function isPortInUse(port: number): boolean {
+  try {
+    const result = execSync(
+      `docker ps -a --filter "publish=${port}" --format "{{.Names}}"`,
+      {encoding: 'utf-8'}
+    );
+    return result.trim().length > 0;
+  } catch {
+    return false;
+  }
+}
+
+function removeContainer(containerName: string): void {
+  try {
+    execSync(`docker rm -f ${containerName} 2>/dev/null`, {encoding: 'utf-8'});
+    console.log(`🗑️ Removed container '${containerName}'`);
+  } catch {
+    // Container doesn't exist or couldn't be removed
+  }
+}
+
 export async function ensureDockerPostgres(): Promise<void> {
   const config = getConfig();
 
@@ -52,11 +73,18 @@ export async function ensureDockerPostgres(): Promise<void> {
     return;
   }
 
+  // If container exists but not running, remove it to avoid port conflicts
   if (containerExists(config.containerName)) {
-    console.log(`🐘 Starting existing container '${config.containerName}'...`);
-    execSync(`docker start ${config.containerName}`, {encoding: 'utf-8'});
-    console.log('✅ Container started');
-    return;
+    console.log(`🐘 Removing stopped container '${config.containerName}'...`);
+    removeContainer(config.containerName);
+  }
+
+  // Check if port is still in use by something else
+  if (isPortInUse(config.port)) {
+    throw new Error(
+      `Port ${config.port} is already in use. ` +
+      `Check for other containers or processes using this port.`
+    );
   }
 
   console.log(`🐘 Creating new postgres container '${config.containerName}'...`);

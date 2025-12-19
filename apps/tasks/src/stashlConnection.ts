@@ -2,7 +2,8 @@ import {initializeServices} from '@stashl/domain/src/services';
 import {closeDatabase} from '@stashl/domain/src/db/connection';
 import {startFlyProxy, stopFlyProxy, isFlyProxyEnabled} from './flyProxy';
 
-let isConnected = false;
+let connectionCount = 0;
+let connectionLock: Promise<void> | null = null;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -16,12 +17,7 @@ function getStashlDatabaseUrl(): string {
   return url;
 }
 
-export async function connectToStashl(): Promise<void> {
-  if (isConnected) {
-    console.log('📦 Stashl already connected');
-    return;
-  }
-
+async function doConnect(): Promise<void> {
   console.log('📦 Connecting to stashl database...');
 
   if (isFlyProxyEnabled()) {
@@ -31,13 +27,37 @@ export async function connectToStashl(): Promise<void> {
 
   const databaseUrl = getStashlDatabaseUrl();
   initializeServices(databaseUrl);
-  isConnected = true;
 
   console.log('✅ Stashl connected');
 }
 
+export async function connectToStashl(): Promise<void> {
+  connectionCount++;
+
+  if (connectionCount > 1) {
+    // Another connection is active, wait for it to be established
+    if (connectionLock) {
+      await connectionLock;
+    }
+    console.log(`📦 Stashl already connected (${connectionCount} users)`);
+    return;
+  }
+
+  // First connection, actually connect
+  connectionLock = doConnect();
+  await connectionLock;
+  connectionLock = null;
+}
+
 export async function disconnectFromStashl(): Promise<void> {
-  if (!isConnected) {
+  if (connectionCount <= 0) {
+    return;
+  }
+
+  connectionCount--;
+
+  if (connectionCount > 0) {
+    console.log(`📦 Stashl still in use (${connectionCount} remaining)`);
     return;
   }
 
@@ -53,12 +73,11 @@ export async function disconnectFromStashl(): Promise<void> {
     await stopFlyProxy();
   }
 
-  isConnected = false;
   console.log('✅ Stashl disconnected');
 }
 
 export function isStashlConnected(): boolean {
-  return isConnected;
+  return connectionCount > 0;
 }
 
 export async function reconnectToStashl(): Promise<void> {
@@ -75,20 +94,11 @@ export async function reconnectToStashl(): Promise<void> {
     await stopFlyProxy();
   }
 
-  isConnected = false;
-
   // Wait for port to be fully released
-  await new Promise((r) => setTimeout(r, 5000));
+  await sleep(5000);
 
   // Force fresh connection
-  if (isFlyProxyEnabled()) {
-    await startFlyProxy();
-    await new Promise((r) => setTimeout(r, 2000));
-  }
-
-  const databaseUrl = getStashlDatabaseUrl();
-  initializeServices(databaseUrl);
-  isConnected = true;
+  await doConnect();
 
   console.log('✅ Stashl reconnected');
 }
