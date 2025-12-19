@@ -91,7 +91,10 @@ export function startFlyProxy(): Promise<void> {
     });
 
     proxyProcess.stderr?.on('data', (data: Buffer) => {
-      console.error(`[fly-proxy error] ${data.toString().trim()}`);
+      const msg = data.toString().trim();
+      // Ignore benign metrics token warnings
+      if (msg.includes('Metrics token unavailable')) return;
+      console.error(`[fly-proxy error] ${msg}`);
     });
 
     proxyProcess.on('error', (error) => {
