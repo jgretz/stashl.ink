@@ -39,6 +39,10 @@ const BLOCKED_DOMAINS = [
   'algolia.com/resources',
   'bluesky.app', // social
   'bsky.app', // social
+  'tiktok.com', // social
+  'youtube.com', // social
+  'pinterest.com', // social
+  'x.com', // social (twitter rebrand)
 ];
 
 const BLOCKED_TITLES = [
@@ -151,6 +155,7 @@ const SKIP_SELECTORS = [
   '.el-splitbar', '#preview', '.preheader',
   // Sponsor regions
   '.norss', '#together', '[class*="sponsor"]',
+  '#together-with', '#sponsy-copy', // TLDR sponsor sections
   // Ad regions (beehiiv/techpresso style)
   '[id*="-ad-"]', '[id*="ad-block"]',
   '[data-ad-link]', '[data-ad-role]',
