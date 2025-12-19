@@ -1,3 +1,6 @@
+console.log('🚀 API starting...');
+const startTime = Date.now();
+
 import {Hono} from 'hono';
 import {cors} from 'hono/cors';
 import {initializeServices} from '@stashl/domain/src/services';
@@ -51,7 +54,7 @@ app.use(
 // Initialize the domain services
 try {
   initializeServices();
-  console.log('✅ Domain services initialized');
+  console.log(`✅ Domain services initialized in ${Date.now() - startTime}ms`);
 } catch (error) {
   console.error('❌ Failed to initialize domain services:', error.message);
   process.exit(1);
@@ -119,8 +122,11 @@ app.onError((err, c) => {
   return c.json({error: 'Internal server error'}, 500);
 });
 
+console.log(`✅ API ready in ${Date.now() - startTime}ms, listening on port ${process.env.API_PORT || 3001}`);
+
 export default {
   port: process.env.API_PORT || 3001,
+  hostname: '0.0.0.0',
   fetch(req: Request, server: any) {
     // Handle WebSocket upgrade for tasks connection
     const url = new URL(req.url);
