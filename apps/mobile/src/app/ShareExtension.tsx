@@ -21,10 +21,10 @@ export default function ShareExtension({url, text}: InitialProps) {
         return;
       }
 
-      // Open the main app with the URL
+      // Open the main app with the URL - navigate to (tabs) route which handles shared links
       const encodedUrl = encodeURIComponent(linkUrl);
       const encodedText = encodeURIComponent(text || '');
-      await openHostApp(`?url=${encodedUrl}&text=${encodedText}`);
+      await openHostApp(`/(tabs)?url=${encodedUrl}&text=${encodedText}`);
 
       // Close the share extension
       close();
