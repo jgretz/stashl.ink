@@ -228,3 +228,90 @@ rssRoutes.post('/feeds/:id/import', async (c) => {
     throw error;
   }
 });
+
+// ============================================================================
+// Task runner endpoints (X-Task-Key auth)
+// ============================================================================
+
+// GET /api/rss/feeds/all - Get all feeds (all users)
+rssRoutes.get('/feeds/all', async (c) => {
+  try {
+    const service = new RssFeedService();
+    const feeds = await service.getAllFeeds();
+    return c.json({feeds});
+  } catch (error) {
+    console.error('Error fetching all feeds:', error);
+    return c.json({error: 'Failed to fetch feeds'}, 500);
+  }
+});
+
+// POST /api/rss/feeds/:feedId/items - Batch import feed items
+rssRoutes.post('/feeds/:feedId/items', async (c) => {
+  try {
+    const feedId = c.req.param('feedId');
+    const {items} = await c.req.json();
+
+    if (!Array.isArray(items)) {
+      return c.json({error: 'items must be an array'}, 400);
+    }
+
+    const itemsWithDates = items.map((item: any) => ({
+      feedId,
+      guid: item.guid,
+      title: item.title,
+      link: item.link,
+      summary: item.summary,
+      content: item.content,
+      imageUrl: item.imageUrl,
+      pubDate: item.pubDate ? new Date(item.pubDate) : undefined,
+    }));
+
+    const service = new RssFeedService();
+    const result = await service.importFeedItems(feedId, itemsWithDates);
+
+    return c.json({
+      newItems: result.newItems.length,
+      skipped: result.skipped,
+    });
+  } catch (error) {
+    console.error('Error importing feed items:', error);
+    return c.json({error: 'Failed to import feed items'}, 500);
+  }
+});
+
+// POST /api/rss/feeds/:feedId/error - Record import error
+rssRoutes.post('/feeds/:feedId/error', async (c) => {
+  try {
+    const feedId = c.req.param('feedId');
+    const {errorMessage} = await c.req.json();
+
+    if (typeof errorMessage !== 'string') {
+      return c.json({error: 'errorMessage is required'}, 400);
+    }
+
+    const service = new RssFeedService();
+    await service.recordImportError(feedId, errorMessage);
+
+    return c.json({recorded: true});
+  } catch (error) {
+    console.error('Error recording import error:', error);
+    return c.json({error: 'Failed to record import error'}, 500);
+  }
+});
+
+// DELETE /api/rss/feeds/:feedId/cleanup - Delete old feed items
+rssRoutes.delete('/feeds/:feedId/cleanup', async (c) => {
+  try {
+    const feedId = c.req.param('feedId');
+    const body = await c.req.json().catch(() => ({}));
+    const daysOld = body.daysOld ?? 30;
+
+    const service = new RssFeedService();
+    const deleted = await service.cleanupOldItems(feedId, daysOld);
+
+    return c.json({deleted});
+  } catch (error) {
+    console.error('Error cleaning up feed items:', error);
+    return c.json({error: 'Failed to cleanup feed items'}, 500);
+  }
+});

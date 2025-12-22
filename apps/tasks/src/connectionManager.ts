@@ -5,7 +5,6 @@ import {
   getPgBossConnectionString,
   stopDockerPostgres,
 } from './dockerPostgres';
-import {disconnectFromStashl} from './stashlConnection';
 
 interface ConnectionConfig {
   retryIntervalMs: number;
@@ -99,7 +98,6 @@ export async function createTaskRunner(
           } catch {
             // Ignore
           }
-          await disconnectFromStashl();
           // Note: Don't stop Docker postgres on normal shutdown for fast restart
         };
 

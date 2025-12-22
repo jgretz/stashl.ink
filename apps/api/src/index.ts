@@ -10,7 +10,7 @@ import {linkRoutes} from './routes/links';
 import {rssRoutes} from './routes/rss';
 import {statsRoutes} from './routes/stats';
 import {emailRoutes} from './routes/email';
-import {authMiddleware} from './middleware/auth';
+import {authMiddleware, taskAuthMiddleware} from './middleware/auth';
 import {
   handleTaskWebSocket,
   handleTaskWebSocketClose,
@@ -79,6 +79,12 @@ app.route('/api/users', userRoutes);
 app.use('/api/links/*', authMiddleware());
 app.route('/api/links', linkRoutes);
 
+// RSS routes - task auth for specific paths, user auth for rest
+// Task paths use wildcards since app.use() doesn't support :param patterns
+app.use('/api/rss/feeds/all', taskAuthMiddleware());
+app.use('/api/rss/feeds/*/items', taskAuthMiddleware());
+app.use('/api/rss/feeds/*/error', taskAuthMiddleware());
+app.use('/api/rss/feeds/*/cleanup', taskAuthMiddleware());
 app.use('/api/rss/*', authMiddleware());
 app.route('/api/rss', rssRoutes);
 
@@ -87,7 +93,11 @@ app.use('/api/stats/task-runner/latest', authMiddleware());
 app.use('/api/stats/email-processor/latest', authMiddleware());
 app.route('/api/stats', statsRoutes);
 
-// Email routes (OAuth callback is public, others need auth)
+// Email routes - task auth for specific paths, user auth for rest
+// Task paths (must come before user auth middleware)
+// Use wildcards since app.use() doesn't support :param patterns
+app.use('/api/email/users/*', taskAuthMiddleware());
+// User paths (OAuth callback is public)
 app.use('/api/email/settings', authMiddleware());
 app.use('/api/email/disconnect', authMiddleware());
 app.use('/api/email/oauth/url', authMiddleware());

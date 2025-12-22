@@ -45,9 +45,13 @@ async function setupWorkers(boss: PgBoss): Promise<void> {
 async function main(): Promise<void> {
   console.log('Starting Stashl Task Runner...');
 
-  // DATABASE_URL still required for stashl connection during job execution
-  if (!process.env.DATABASE_URL) {
-    console.error('❌ DATABASE_URL environment variable is required');
+  // Validate required environment variables for API communication
+  if (!process.env.API_URL) {
+    console.error('❌ API_URL environment variable is required');
+    process.exit(1);
+  }
+  if (!process.env.TASK_API_KEY) {
+    console.error('❌ TASK_API_KEY environment variable is required');
     process.exit(1);
   }
 

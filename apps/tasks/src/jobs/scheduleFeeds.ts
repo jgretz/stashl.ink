@@ -1,40 +1,5 @@
 import type PgBoss from 'pg-boss';
-import {RssFeedService} from '@stashl/domain/src/services/rssFeed.service';
-import {withStashlConnection} from '../stashlConnection';
-
-const API_URL = process.env.API_URL;
-const TASK_API_KEY = process.env.TASK_API_KEY;
-
-async function reportTaskStats(successCount: number, failCount: number): Promise<void> {
-  if (!TASK_API_KEY) {
-    console.warn('TASK_API_KEY not set, skipping stats reporting');
-    return;
-  }
-
-  if (!API_URL) {
-    console.warn('API_URL not set, skipping stats reporting');
-    return;
-  }
-
-  try {
-    const response = await fetch(`${API_URL}/stats/task-runner`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Task-Key': TASK_API_KEY,
-      },
-      body: JSON.stringify({successCount, failCount}),
-    });
-
-    if (!response.ok) {
-      console.error('Failed to report task stats:', await response.text());
-    } else {
-      console.log(`📊 Reported task stats: ${successCount} success, ${failCount} fail`);
-    }
-  } catch (error) {
-    console.error('Error reporting task stats:', error);
-  }
-}
+import {getAllFeeds, reportTaskRunnerStats} from '../apiClient';
 
 export function scheduleFeedsHandler(boss: PgBoss) {
   return async function () {
@@ -44,27 +9,24 @@ export function scheduleFeedsHandler(boss: PgBoss) {
     let failCount = 0;
 
     try {
-      await withStashlConnection(async () => {
-        const service = new RssFeedService();
-        const feeds = await service.getAllFeeds();
+      const feeds = await getAllFeeds();
 
-        for (const feed of feeds) {
-          try {
-            await boss.send('import-feed', {feedId: feed.id, feedUrl: feed.feedUrl});
-            successCount++;
-          } catch {
-            failCount++;
-          }
+      for (const feed of feeds) {
+        try {
+          await boss.send('import-feed', {feedId: feed.id, feedUrl: feed.feedUrl});
+          successCount++;
+        } catch {
+          failCount++;
         }
+      }
 
-        console.log(`Queued ${feeds.length} feeds for import`);
-      });
+      console.log(`Queued ${feeds.length} feeds for import`);
     } catch (error) {
       console.error('Failed to queue feed imports:', error);
       failCount++;
       throw error;
     } finally {
-      await reportTaskStats(successCount, failCount);
+      await reportTaskRunnerStats(successCount, failCount);
     }
   };
 }

@@ -1,6 +1,7 @@
 import {Hono} from 'hono';
 import {google} from 'googleapis';
 import {EmailService} from '@stashl/domain/src/services/email.service';
+import {UserService} from '@stashl/domain/src/services/user.service';
 import {sendTaskMessage} from '../taskSocket';
 
 export const emailRoutes = new Hono();
@@ -200,5 +201,126 @@ emailRoutes.post('/refresh', async (c) => {
     }
   } catch (error) {
     throw error;
+  }
+});
+
+// ============================================================================
+// Task runner endpoints (X-Task-Key auth)
+// ============================================================================
+
+// GET /api/email/users/enabled - Get users with email enabled
+emailRoutes.get('/users/enabled', async (c) => {
+  try {
+    const service = new EmailService();
+    const users = await service.getUsersWithEmailEnabled();
+
+    const sanitizedUsers = users.map((u) => ({
+      id: u.id,
+      email: u.email,
+      name: u.name,
+      emailIntegrationEnabled: u.emailIntegrationEnabled,
+      emailFilter: u.emailFilter,
+      gmailAccessToken: u.gmailAccessToken,
+      gmailRefreshToken: u.gmailRefreshToken,
+      gmailTokenExpiry: u.gmailTokenExpiry?.toISOString() ?? null,
+    }));
+
+    return c.json({users: sanitizedUsers});
+  } catch (error) {
+    console.error('Error fetching email users:', error);
+    return c.json({error: 'Failed to fetch email users'}, 500);
+  }
+});
+
+// GET /api/email/users/:userId - Get user by ID (for task runner)
+emailRoutes.get('/users/:userId', async (c) => {
+  try {
+    const userId = c.req.param('userId');
+    const service = new UserService();
+    const user = await service.getUserById(userId);
+
+    if (!user) {
+      return c.json({user: null});
+    }
+
+    return c.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        emailIntegrationEnabled: user.emailIntegrationEnabled,
+        emailFilter: user.emailFilter,
+        gmailAccessToken: user.gmailAccessToken,
+        gmailRefreshToken: user.gmailRefreshToken,
+        gmailTokenExpiry: user.gmailTokenExpiry?.toISOString() ?? null,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return c.json({error: 'Failed to fetch user'}, 500);
+  }
+});
+
+// PUT /api/email/users/:userId/gmail-tokens - Save Gmail tokens
+emailRoutes.put('/users/:userId/gmail-tokens', async (c) => {
+  try {
+    const userId = c.req.param('userId');
+    const {gmailAccessToken, gmailRefreshToken, gmailTokenExpiry} = await c.req.json();
+
+    if (!gmailAccessToken || !gmailRefreshToken || !gmailTokenExpiry) {
+      return c.json({error: 'gmailAccessToken, gmailRefreshToken, and gmailTokenExpiry are required'}, 400);
+    }
+
+    const service = new EmailService();
+    await service.saveGmailTokens(userId, {
+      gmailAccessToken,
+      gmailRefreshToken,
+      gmailTokenExpiry: new Date(gmailTokenExpiry),
+    });
+
+    return c.json({updated: true});
+  } catch (error) {
+    console.error('Error saving gmail tokens:', error);
+    return c.json({error: 'Failed to save gmail tokens'}, 500);
+  }
+});
+
+// POST /api/email/users/:userId/items - Batch import email items
+emailRoutes.post('/users/:userId/items', async (c) => {
+  try {
+    const userId = c.req.param('userId');
+    const {items} = await c.req.json();
+
+    if (!Array.isArray(items)) {
+      return c.json({error: 'items must be an array'}, 400);
+    }
+
+    const service = new EmailService();
+    const result = await service.importEmailItems(userId, items);
+
+    return c.json({
+      newItems: result.newItems.length,
+      skipped: result.skipped,
+    });
+  } catch (error) {
+    console.error('Error importing email items:', error);
+    return c.json({error: 'Failed to import email items'}, 500);
+  }
+});
+
+// DELETE /api/email/users/:userId/cleanup - Delete old email items
+emailRoutes.delete('/users/:userId/cleanup', async (c) => {
+  try {
+    const userId = c.req.param('userId');
+    const body = await c.req.json().catch(() => ({}));
+    const daysOld = body.daysOld ?? 30;
+
+    const service = new EmailService();
+    const deleted = await service.cleanupOldItems(userId, daysOld);
+
+    return c.json({deleted});
+  } catch (error) {
+    console.error('Error cleaning up email items:', error);
+    return c.json({error: 'Failed to cleanup email items'}, 500);
   }
 });
