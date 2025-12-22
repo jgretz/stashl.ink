@@ -150,30 +150,13 @@ export async function cleanupEmailItems(userId: string, daysOld: number): Promis
 
 // Stats reporting
 
-export async function reportTaskRunnerStats(
-  successCount: number,
-  failCount: number,
-): Promise<void> {
-  if (!API_URL || !TASK_API_KEY) {
-    console.warn('API_URL/TASK_API_KEY not set, skipping stats reporting');
-    return;
-  }
-
+export async function reportTaskRunnerStats(successCount: number, failCount: number): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/api/stats/task-runner`, {
+    await taskApiRequest('/api/stats/task-runner', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Task-Key': TASK_API_KEY,
-      },
       body: JSON.stringify({successCount, failCount}),
     });
-
-    if (!response.ok) {
-      console.error('Failed to report task stats:', await response.text());
-    } else {
-      console.log(`📊 Reported task stats: ${successCount} success, ${failCount} fail`);
-    }
+    console.log(`📊 Reported task stats: ${successCount} success, ${failCount} fail`);
   } catch (error) {
     console.error('Error reporting task stats:', error);
   }
@@ -184,28 +167,14 @@ export async function reportEmailProcessorStats(
   emailsParsed: number,
   linksFound: number,
 ): Promise<void> {
-  if (!API_URL || !TASK_API_KEY) {
-    console.warn('API_URL/TASK_API_KEY not set, skipping stats reporting');
-    return;
-  }
-
   try {
-    const response = await fetch(`${API_URL}/api/stats/email-processor`, {
+    await taskApiRequest('/api/stats/email-processor', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Task-Key': TASK_API_KEY,
-      },
       body: JSON.stringify({usersProcessed, emailsParsed, linksFound}),
     });
-
-    if (!response.ok) {
-      console.error('Failed to report email stats:', await response.text());
-    } else {
-      console.log(
-        `📊 Reported email stats: ${usersProcessed} users, ${emailsParsed} emails, ${linksFound} links`,
-      );
-    }
+    console.log(
+      `📊 Reported email stats: ${usersProcessed} users, ${emailsParsed} emails, ${linksFound} links`,
+    );
   } catch (error) {
     console.error('Error reporting email stats:', error);
   }
