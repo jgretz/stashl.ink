@@ -390,12 +390,7 @@ export function parseLinksFromListFormat(html: string): ParsedLink[] {
     });
   });
 
-  // If we found list items, return them
-  if (results.size > 0) {
-    return Array.from(results.values());
-  }
-
-  // Try paragraphs with links (newsletters like ui.dev, buttondown)
+  // Also check paragraphs/divs (some newsletters use both lists AND paragraphs)
   const allContainers = $('p, div, td');
   const totalContainers = allContainers.length;
   let containerIndex = 0;
