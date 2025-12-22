@@ -2,6 +2,7 @@ import type {RssFeedItem} from '@web/services/feeds';
 import {useMarkItemRead} from '@web/services/feeds';
 import {useCreateLink} from '@web/services/links';
 import {Check, ExternalLink, Bookmark} from 'lucide-react';
+import {toast} from 'sonner';
 
 interface ReaderItemProps {
   item: RssFeedItem;
@@ -25,7 +26,10 @@ export function ReaderItem({item}: ReaderItemProps) {
   const handleMarkRead = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    markReadMutation.mutate(item.id);
+    markReadMutation.mutate(item.id, {
+      onSuccess: () => toast.success('Marked as read'),
+      onError: () => toast.error('Failed to mark as read'),
+    });
   };
 
   const handleClick = () => {
@@ -43,8 +47,10 @@ export function ReaderItem({item}: ReaderItemProps) {
       },
       {
         onSuccess: () => {
+          toast.success('Saved to links');
           markReadMutation.mutate(item.id);
         },
+        onError: () => toast.error('Failed to save link'),
       },
     );
   };

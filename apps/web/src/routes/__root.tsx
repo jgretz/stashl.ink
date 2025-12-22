@@ -2,6 +2,7 @@ import {createRootRoute, Outlet, HeadContent, Scripts} from '@tanstack/react-rou
 import {TanStackRouterDevtools} from '@tanstack/react-router-devtools';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
+import {Toaster} from 'sonner';
 import {RootErrorComponent} from '../components/RootErrorComponent';
 
 import '../globals.css';
@@ -61,6 +62,7 @@ export default function Root() {
       <body className='min-h-screen'>
         <QueryClientProvider client={queryClient}>
           <Outlet />
+          <Toaster position='bottom-right' richColors closeButton />
           <ReactQueryDevtools />
           <TanStackRouterDevtools />
         </QueryClientProvider>

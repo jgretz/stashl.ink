@@ -2,6 +2,7 @@ import type {EmailItem} from '@web/services/email';
 import {useMarkEmailItemRead} from '@web/services/email';
 import {useCreateLink} from '@web/services/links';
 import {Check, ExternalLink, Bookmark} from 'lucide-react';
+import {toast} from 'sonner';
 
 interface InboxItemProps {
   item: EmailItem;
@@ -39,7 +40,10 @@ export function InboxItem({item}: InboxItemProps) {
   const handleMarkRead = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    markReadMutation.mutate(item.id);
+    markReadMutation.mutate(item.id, {
+      onSuccess: () => toast.success('Marked as read'),
+      onError: () => toast.error('Failed to mark as read'),
+    });
   };
 
   const handleClick = () => {
@@ -59,8 +63,10 @@ export function InboxItem({item}: InboxItemProps) {
       },
       {
         onSuccess: () => {
+          toast.success('Saved to links');
           markReadMutation.mutate(item.id);
         },
+        onError: () => toast.error('Failed to save link'),
       },
     );
   };
