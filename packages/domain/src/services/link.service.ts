@@ -22,14 +22,15 @@ export class LinkService {
       throw new Error('Title cannot be empty');
     }
 
-    const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-    if (!urlRegex.test(input.url)) {
-      throw new Error('Invalid URL format');
-    }
-
-    let url = input.url;
+    let url = input.url.trim();
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       url = 'https://' + url;
+    }
+
+    try {
+      new URL(url);
+    } catch {
+      throw new Error('Invalid URL format');
     }
 
     return await this.repository.create({
@@ -61,14 +62,18 @@ export class LinkService {
     }
 
     if (input.url) {
-      const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-      if (!urlRegex.test(input.url)) {
+      let url = input.url.trim();
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+
+      try {
+        new URL(url);
+      } catch {
         throw new Error('Invalid URL format');
       }
 
-      if (!input.url.startsWith('http://') && !input.url.startsWith('https://')) {
-        input.url = 'https://' + input.url;
-      }
+      input.url = url;
     }
 
     return await this.repository.update(id, input);
