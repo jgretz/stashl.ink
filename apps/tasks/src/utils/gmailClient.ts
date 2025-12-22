@@ -149,3 +149,12 @@ export function extractEmailAddress(fromHeader: string): string {
 
   return fromHeader;
 }
+
+export function extractDisplayName(fromHeader: string): string {
+  // From: "TLDR AI" <dan@tldrnewsletter.com> or TLDR AI <dan@tldrnewsletter.com>
+  const match = fromHeader.match(/^"?([^"<]+)"?\s*</);
+  if (match) return match[1].trim();
+
+  // No angle brackets - just an email address, return as-is
+  return fromHeader.trim();
+}

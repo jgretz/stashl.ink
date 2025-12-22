@@ -1,5 +1,5 @@
 import type PgBoss from 'pg-boss';
-import {GmailClient, extractEmailAddress} from '../utils/gmailClient';
+import {GmailClient, extractDisplayName} from '../utils/gmailClient';
 import {parseLinksFromListFormat, type ParsedLink} from '../utils/emailParser';
 import {
   getUsersWithEmailEnabled,
@@ -52,10 +52,11 @@ async function processUserEmails(user: TaskUser): Promise<{emailCount: number; l
       const parsedLinks = parseLinksFromListFormat(message.htmlBody);
 
       if (parsedLinks.length > 0) {
-        const subjectPreview = message.subject?.slice(0, 15) || '';
-        const emailFrom = subjectPreview
-          ? `${extractEmailAddress(message.from)} (${subjectPreview})`
-          : extractEmailAddress(message.from);
+        const displayName = extractDisplayName(message.from);
+        const subjectPreview = message.subject?.trim().slice(0, 25) || '';
+        const emailFrom = subjectPreview.length > 0
+          ? `${displayName} (${subjectPreview}...)`
+          : displayName;
         const items = parsedLinks.map((parsed: ParsedLink) => ({
           emailMessageId: messageId,
           emailFrom,
