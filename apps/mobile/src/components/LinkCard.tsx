@@ -49,10 +49,10 @@ export function LinkCard({link, onDelete, onEdit}: LinkCardProps) {
       </View>
       <View style={styles.actions}>
         <TouchableOpacity style={styles.actionButton} onPress={onEdit}>
-          <Ionicons name="pencil" size={18} color={colors.primary} />
+          <Ionicons name="pencil" size={26} color={colors.primary} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
-          <Ionicons name="trash-outline" size={18} color={colors.destructive} />
+          <Ionicons name="trash-outline" size={26} color={colors.destructive} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -102,10 +102,14 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'column',
-    gap: 8,
+    justifyContent: 'space-around',
+    alignSelf: 'stretch',
     marginLeft: 8,
   },
   actionButton: {
-    padding: 8,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
   },
 });

@@ -6,14 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
-  Alert,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import {useCreateLink} from '../services';
-import {fetchPageMetadata, normalizeUrl, isValidUrl} from '@stashl/metadata';
-import type {CreateLinkInput} from '@stashl/domain';
+import {normalizeUrl, isValidUrl} from '@stashl/metadata';
 import {colors} from '../theme';
 
 interface AddLinkFormProps {
@@ -23,12 +21,11 @@ interface AddLinkFormProps {
 
 export function AddLinkForm({visible, onClose}: AddLinkFormProps) {
   const [url, setUrl] = useState('');
-  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
   const [error, setError] = useState('');
 
   const createLinkMutation = useCreateLink();
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!url.trim()) {
       setError('URL is required');
       return;
@@ -41,35 +38,21 @@ export function AddLinkForm({visible, onClose}: AddLinkFormProps) {
       return;
     }
 
-    setIsLoadingMetadata(true);
     setError('');
-
-    try {
-      const metadata = await fetchPageMetadata(normalizedUrl);
-
-      const linkData: CreateLinkInput = {
-        url: normalizedUrl,
-        title: metadata.title,
-        description: metadata.description,
-      };
-
-      createLinkMutation.mutate(linkData);
-    } catch (error) {
-      console.error('Error fetching metadata:', error);
-      // Fallback: create link with just URL
-      createLinkMutation.mutate({
-        url: normalizedUrl,
-        title: new URL(normalizedUrl).hostname,
-      });
-    } finally {
-      setIsLoadingMetadata(false);
-    }
+    createLinkMutation.mutate(
+      {url: normalizedUrl},
+      {
+        onSuccess: () => {
+          setUrl('');
+          onClose();
+        },
+      }
+    );
   };
 
   const handleClose = () => {
     setUrl('');
     setError('');
-    setIsLoadingMetadata(false);
     onClose();
   };
 
@@ -93,19 +76,15 @@ export function AddLinkForm({visible, onClose}: AddLinkFormProps) {
           <Text style={styles.title}>Add New Link</Text>
           <TouchableOpacity
             onPress={handleSubmit}
-            disabled={createLinkMutation.isPending || isLoadingMetadata}
+            disabled={createLinkMutation.isPending}
           >
             <Text
               style={[
                 styles.saveButton,
-                (createLinkMutation.isPending || isLoadingMetadata) && styles.disabledButton,
+                createLinkMutation.isPending && styles.disabledButton,
               ]}
             >
-              {isLoadingMetadata
-                ? 'Fetching...'
-                : createLinkMutation.isPending
-                  ? 'Adding...'
-                  : 'Add'}
+              {createLinkMutation.isPending ? 'Adding...' : 'Add'}
             </Text>
           </TouchableOpacity>
         </View>

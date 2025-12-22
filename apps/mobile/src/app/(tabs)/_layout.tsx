@@ -16,39 +16,31 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name='index'
         options={{
           title: 'Links',
-          tabBarIcon: ({color, size}) => (
-            <Ionicons name="bookmark" size={size} color={color} />
-          ),
+          tabBarIcon: ({color, size}) => <Ionicons name='bookmark' size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="reader"
+        name='reader'
         options={{
-          title: 'Reader',
-          tabBarIcon: ({color, size}) => (
-            <Ionicons name="newspaper" size={size} color={color} />
-          ),
+          title: 'RSS Reader',
+          tabBarIcon: ({color, size}) => <Ionicons name='newspaper' size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="inbox"
+        name='inbox'
         options={{
           title: 'Inbox',
-          tabBarIcon: ({color, size}) => (
-            <Ionicons name="mail" size={size} color={color} />
-          ),
+          tabBarIcon: ({color, size}) => <Ionicons name='mail' size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name='settings'
         options={{
           title: 'Settings',
-          tabBarIcon: ({color, size}) => (
-            <Ionicons name="settings" size={size} color={color} />
-          ),
+          tabBarIcon: ({color, size}) => <Ionicons name='settings' size={size} color={color} />,
         }}
       />
     </Tabs>

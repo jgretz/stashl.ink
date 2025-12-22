@@ -1,5 +1,13 @@
 import React from 'react';
-import {StyleSheet, View, Text, SafeAreaView, TouchableOpacity, ActivityIndicator, Alert} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import * as Burnt from 'burnt';
 import {ReaderView} from '../../components/reader';
@@ -43,7 +51,7 @@ export default function ReaderTab() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Reader</Text>
+        <Text style={styles.headerTitle}>RSS Reader</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
             onPress={handleMarkAllRead}
@@ -51,9 +59,9 @@ export default function ReaderTab() {
             style={styles.headerButton}
           >
             {markAllReadMutation.isPending ? (
-              <ActivityIndicator size="small" color={colors.primary} />
+              <ActivityIndicator size='small' color={colors.primary} />
             ) : (
-              <Ionicons name="checkmark-done" size={22} color={colors.primary} />
+              <Ionicons name='checkmark-done' size={22} color={colors.primary} />
             )}
           </TouchableOpacity>
           <TouchableOpacity
@@ -62,9 +70,9 @@ export default function ReaderTab() {
             style={styles.headerButton}
           >
             {importAllMutation.isPending ? (
-              <ActivityIndicator size="small" color={colors.linkAccent} />
+              <ActivityIndicator size='small' color={colors.linkAccent} />
             ) : (
-              <Ionicons name="refresh" size={22} color={colors.linkAccent} />
+              <Ionicons name='refresh' size={22} color={colors.linkAccent} />
             )}
           </TouchableOpacity>
         </View>

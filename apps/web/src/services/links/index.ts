@@ -12,8 +12,6 @@ export interface Link {
 
 export interface CreateLinkInput {
   url: string;
-  title: string;
-  description?: string;
 }
 
 export interface UpdateLinkInput {

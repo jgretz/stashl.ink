@@ -18,6 +18,7 @@
       "version": "1.0.0",
       "dependencies": {
         "@stashl/domain": "workspace:*",
+        "@stashl/metadata": "workspace:*",
         "googleapis": "^169.0.0",
         "hono": "^4.8.5",
         "jsonwebtoken": "^9.0.3",

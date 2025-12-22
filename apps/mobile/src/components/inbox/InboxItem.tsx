@@ -52,13 +52,8 @@ export function InboxItem({item}: InboxItemProps) {
   };
 
   const handleSaveLink = () => {
-    const domain = extractDomain(item.link);
     createLinkMutation.mutate(
-      {
-        url: item.link,
-        title: item.title || domain,
-        description: item.description || undefined,
-      },
+      {url: item.link},
       {
         onSuccess: () => {
           Burnt.toast({title: 'Saved to links', preset: 'done'});
@@ -77,9 +72,10 @@ export function InboxItem({item}: InboxItemProps) {
 
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress} activeOpacity={0.7}>
+      <View style={styles.imageSpacer} />
       <View style={styles.content}>
         <Text style={styles.senderName}>From: {senderName}</Text>
-        <Text style={styles.title} numberOfLines={2}>
+        <Text style={styles.title} numberOfLines={3}>
           {displayTitle}
         </Text>
         {item.description && (
@@ -98,7 +94,7 @@ export function InboxItem({item}: InboxItemProps) {
         >
           <Ionicons
             name={createLinkMutation.isPending ? 'hourglass' : 'bookmark-outline'}
-            size={22}
+            size={26}
             color={colors.linkAccent}
           />
         </TouchableOpacity>
@@ -109,7 +105,7 @@ export function InboxItem({item}: InboxItemProps) {
         >
           <Ionicons
             name={markReadMutation.isPending ? 'hourglass' : 'checkmark-circle-outline'}
-            size={22}
+            size={26}
             color={colors.primary}
           />
         </TouchableOpacity>
@@ -123,7 +119,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: 10,
     marginVertical: 6,
-    padding: 14,
     shadowColor: colors.shadowColor,
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.15,
@@ -131,9 +126,18 @@ const styles = StyleSheet.create({
     elevation: 2,
     borderWidth: 1,
     borderColor: colors.border,
+    flexDirection: 'row',
+    overflow: 'hidden',
+  },
+  imageSpacer: {
+    width: 90,
+    height: 90,
+    backgroundColor: colors.background,
+    alignSelf: 'center',
   },
   content: {
     flex: 1,
+    padding: 12,
   },
   senderName: {
     fontSize: 11,
@@ -164,12 +168,15 @@ const styles = StyleSheet.create({
     color: colors.mutedForeground,
   },
   actions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 10,
-    gap: 16,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignSelf: 'stretch',
+    marginLeft: 8,
   },
   actionButton: {
-    padding: 6,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
   },
 });

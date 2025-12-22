@@ -2,8 +2,7 @@ import {useState} from 'react';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {useForm} from '@tanstack/react-form';
 import {createLink} from '@web/services';
-import type {CreateLinkInput} from '@stashl/domain-types';
-import {fetchPageMetadata, normalizeUrl, isValidUrl} from '@stashl/metadata';
+import {normalizeUrl, isValidUrl} from '@stashl/metadata';
 import {Button} from '@web/components/ui/button';
 import {FormInput} from '@web/components/forms/FormInput';
 import {
@@ -18,57 +17,33 @@ import {Plus} from 'lucide-react';
 
 export function AddLinkForm() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
   const queryClient = useQueryClient();
-
-  const createLinkMutation = useMutation({
-    mutationFn: (input: CreateLinkInput) => createLink(input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['links']});
-      setIsOpen(false);
-      form.reset();
-    },
-  });
 
   const form = useForm({
     defaultValues: {
       url: '',
     },
-    onSubmit: async ({value}) => {
-      if (!value.url?.trim()) {
-        return;
-      }
+    onSubmit: () => {},
+  });
 
-      const normalizedUrl = normalizeUrl(value.url.trim());
-
-      if (!isValidUrl(normalizedUrl)) {
-        return;
-      }
-
-      setIsLoadingMetadata(true);
-
-      try {
-        const metadata = await fetchPageMetadata(normalizedUrl);
-
-        const linkData: CreateLinkInput = {
-          url: normalizedUrl,
-          title: metadata.title,
-          description: metadata.description,
-        };
-
-        createLinkMutation.mutate(linkData);
-      } catch (error) {
-        console.error('Error fetching metadata:', error);
-        // Fallback: create link with just URL
-        createLinkMutation.mutate({
-          url: normalizedUrl,
-          title: new URL(normalizedUrl).hostname,
-        });
-      } finally {
-        setIsLoadingMetadata(false);
-      }
+  const createLinkMutation = useMutation({
+    mutationFn: createLink,
+    onSuccess: () => {
+      setIsOpen(false);
+      form.reset();
+      queryClient.invalidateQueries({queryKey: ['links']});
     },
   });
+
+  const handleSubmit = () => {
+    const url = form.getFieldValue('url');
+    if (!url?.trim()) return;
+
+    const normalizedUrl = normalizeUrl(url.trim());
+    if (!isValidUrl(normalizedUrl)) return;
+
+    createLinkMutation.mutate({url: normalizedUrl});
+  };
 
   return (
     <div>
@@ -89,7 +64,7 @@ export function AddLinkForm() {
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              form.handleSubmit();
+              handleSubmit();
             }}
           >
             <form.Field name='url'>
@@ -123,21 +98,13 @@ export function AddLinkForm() {
                 Cancel
               </Button>
               <div className='w-3'></div>
-              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-                {([canSubmit, isSubmitting]) => (
-                  <Button
-                    type='submit'
-                    disabled={!canSubmit || createLinkMutation.isPending || isLoadingMetadata}
-                    className='flex-1'
-                  >
-                    {isLoadingMetadata
-                      ? 'Fetching info...'
-                      : createLinkMutation.isPending || isSubmitting
-                        ? 'Adding...'
-                        : 'Add Link'}
-                  </Button>
-                )}
-              </form.Subscribe>
+              <Button
+                type='submit'
+                disabled={createLinkMutation.isPending}
+                className='flex-1'
+              >
+                {createLinkMutation.isPending ? 'Adding...' : 'Add Link'}
+              </Button>
             </div>
 
             {createLinkMutation.error && (

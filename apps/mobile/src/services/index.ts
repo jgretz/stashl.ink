@@ -18,3 +18,6 @@ export * from './email';
 
 // Share Handler
 export * from './share-handler';
+
+// Shared Storage (for share extension)
+export * from './shared-storage';

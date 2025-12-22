@@ -40,11 +40,7 @@ export function ReaderItem({item}: ReaderItemProps) {
     e.preventDefault();
     e.stopPropagation();
     createLinkMutation.mutate(
-      {
-        url: item.link,
-        title: item.title,
-        description: item.summary || undefined,
-      },
+      {url: item.link},
       {
         onSuccess: () => {
           toast.success('Saved to links');

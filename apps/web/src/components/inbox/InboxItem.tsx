@@ -56,11 +56,7 @@ export function InboxItem({item}: InboxItemProps) {
     e.preventDefault();
     e.stopPropagation();
     createLinkMutation.mutate(
-      {
-        url: item.link,
-        title: item.title || domain,
-        description: item.description || undefined,
-      },
+      {url: item.link},
       {
         onSuccess: () => {
           toast.success('Saved to links');

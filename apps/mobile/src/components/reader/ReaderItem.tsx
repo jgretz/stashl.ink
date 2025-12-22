@@ -39,11 +39,7 @@ export function ReaderItem({item}: ReaderItemProps) {
 
   const handleSaveLink = () => {
     createLinkMutation.mutate(
-      {
-        url: item.link,
-        title: item.title,
-        description: item.summary || undefined,
-      },
+      {url: item.link},
       {
         onSuccess: () => {
           Burnt.toast({title: 'Saved to links', preset: 'done'});
@@ -59,12 +55,14 @@ export function ReaderItem({item}: ReaderItemProps) {
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress} activeOpacity={0.7}>
       <View style={styles.content}>
-        {item.imageUrl && (
-          <Image source={{uri: item.imageUrl}} style={styles.image} resizeMode="cover" />
-        )}
+        <View style={styles.imageContainer}>
+          {item.imageUrl && (
+            <Image source={{uri: item.imageUrl}} style={styles.image} resizeMode="cover" />
+          )}
+        </View>
         <View style={styles.textContent}>
           <Text style={styles.feedTitle}>{item.feedTitle}</Text>
-          <Text style={styles.title} numberOfLines={2}>
+          <Text style={styles.title} numberOfLines={3}>
             {item.title}
           </Text>
           {item.summary && (
@@ -83,7 +81,7 @@ export function ReaderItem({item}: ReaderItemProps) {
         >
           <Ionicons
             name={createLinkMutation.isPending ? 'hourglass' : 'bookmark-outline'}
-            size={22}
+            size={26}
             color={colors.linkAccent}
           />
         </TouchableOpacity>
@@ -94,7 +92,7 @@ export function ReaderItem({item}: ReaderItemProps) {
         >
           <Ionicons
             name={markReadMutation.isPending ? 'hourglass' : 'checkmark-circle-outline'}
-            size={22}
+            size={26}
             color={colors.primary}
           />
         </TouchableOpacity>
@@ -116,14 +114,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     overflow: 'hidden',
+    flexDirection: 'row',
   },
   content: {
+    flex: 1,
     flexDirection: 'row',
+  },
+  imageContainer: {
+    width: 90,
+    height: 90,
+    backgroundColor: colors.background,
+    alignSelf: 'center',
   },
   image: {
     width: 90,
     height: 90,
-    backgroundColor: colors.background,
   },
   textContent: {
     flex: 1,
@@ -154,13 +159,14 @@ const styles = StyleSheet.create({
     color: colors.mutedForeground,
   },
   actions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingHorizontal: 12,
-    paddingBottom: 10,
-    gap: 16,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    paddingHorizontal: 8,
   },
   actionButton: {
-    padding: 6,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
   },
 });

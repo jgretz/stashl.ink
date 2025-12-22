@@ -1,30 +1,30 @@
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {Slot, useRouter, useSegments} from 'expo-router';
+import {Slot} from 'expo-router';
 import {StatusBar} from 'expo-status-bar';
-import {useEffect} from 'react';
+import {View, ActivityIndicator} from 'react-native';
 import {AuthProvider, useAuth} from '../contexts/AuthContext';
+import {LoginScreen} from '../components';
+import {colors} from '../theme';
 
 const queryClient = new QueryClient();
 
-function AuthRouter() {
+function AuthGate() {
   const {isAuthenticated, isLoading} = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (isLoading) return;
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background}}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
-    const inAuthGroup = segments[0] === '(tabs)';
-    const inProtectedRoute = inAuthGroup || segments[0] === 'feeds';
-    const onLoginScreen = segments.length === 0 || segments[0] === undefined;
+  // Not authenticated → render login directly (not a route)
+  if (!isAuthenticated) {
+    return <LoginScreen />;
+  }
 
-    if (!isAuthenticated && inProtectedRoute) {
-      router.replace('/');
-    } else if (isAuthenticated && onLoginScreen) {
-      router.replace('/(tabs)');
-    }
-  }, [isAuthenticated, isLoading, segments]);
-
+  // Authenticated → render routes via Slot
   return <Slot />;
 }
 
@@ -32,8 +32,8 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthRouter />
-        <StatusBar style='dark' />
+        <AuthGate />
+        <StatusBar style="dark" />
       </QueryClientProvider>
     </AuthProvider>
   );

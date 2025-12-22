@@ -1,9 +1,8 @@
 import * as Linking from 'expo-linking';
 import * as IntentLauncher from 'expo-intent-launcher';
 import {Platform} from 'react-native';
-import {fetchPageMetadata, isValidUrl, normalizeUrl} from '@stashl/metadata';
+import {isValidUrl, normalizeUrl} from '@stashl/metadata';
 import {createLinkDirect} from './links';
-import type {CreateLinkInput} from '@stashl/domain';
 
 export interface SharedLinkData {
   url: string;
@@ -131,7 +130,7 @@ export class ShareHandler {
   }
 
   /**
-   * Process a shared URL by fetching metadata and creating a link
+   * Process a shared URL - server handles metadata fetching
    */
   async processSharedUrl(url: string): Promise<void> {
     try {
@@ -140,24 +139,11 @@ export class ShareHandler {
       }
 
       const normalizedUrl = normalizeUrl(url);
-
       console.log('Processing shared URL:', normalizedUrl);
 
-      // Fetch page metadata
-      const metadata = await fetchPageMetadata(normalizedUrl);
+      await createLinkDirect({url: normalizedUrl});
 
-      console.log('Fetched metadata:', metadata);
-
-      // Create the link
-      const linkInput: CreateLinkInput = {
-        url: normalizedUrl,
-        title: metadata.title,
-        description: metadata.description,
-      };
-
-      await createLinkDirect(linkInput);
-
-      console.log('Successfully saved shared link:', metadata.title);
+      console.log('Successfully saved shared link');
     } catch (error) {
       console.error('Error processing shared URL:', error);
       throw error;

@@ -1,5 +1,6 @@
 import {Hono} from 'hono';
 import {LinkService} from '@stashl/domain/src/services/link.service';
+import {fetchPageMetadata} from '@stashl/metadata';
 
 export const linkRoutes = new Hono();
 
@@ -46,15 +47,22 @@ linkRoutes.post('/', async (c) => {
   try {
     const {userId} = c.get('user');
     const body = await c.req.json();
-    const {url, title, description} = body;
+    const {url} = body;
 
-    if (!url || !title) {
-      return c.json({error: 'URL and title are required'}, 400);
+    if (!url) {
+      return c.json({error: 'URL is required'}, 400);
     }
 
+    // Fetch metadata server-side
+    const metadata = await fetchPageMetadata(url);
+
     const linkService = new LinkService();
-    const link = await linkService.createLink({url, title, description}, userId);
-    
+    const link = await linkService.createLink({
+      url,
+      title: metadata.title,
+      description: metadata.description,
+    }, userId);
+
     return c.json({
       message: 'Link created successfully',
       link,

@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import {apiClient} from './api-client';
+import {setSharedAuthToken, clearSharedAuthToken} from './shared-storage';
 
 const AUTH_TOKEN_KEY = 'stashl_auth_token';
 const USER_KEY = 'stashl_user';
@@ -35,6 +36,9 @@ export async function login(input: LoginInput): Promise<AuthResponse> {
   await SecureStore.setItemAsync(AUTH_TOKEN_KEY, response.token);
   await SecureStore.setItemAsync(USER_KEY, JSON.stringify(response.user));
 
+  // Also store token in shared storage for share extension access
+  await setSharedAuthToken(response.token);
+
   return response;
 }
 
@@ -45,12 +49,16 @@ export async function register(input: RegisterInput): Promise<AuthResponse> {
   await SecureStore.setItemAsync(AUTH_TOKEN_KEY, response.token);
   await SecureStore.setItemAsync(USER_KEY, JSON.stringify(response.user));
 
+  // Also store token in shared storage for share extension access
+  await setSharedAuthToken(response.token);
+
   return response;
 }
 
 export async function logout(): Promise<void> {
   await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
   await SecureStore.deleteItemAsync(USER_KEY);
+  await clearSharedAuthToken();
 }
 
 export async function getToken(): Promise<string | null> {
