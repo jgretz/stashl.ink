@@ -16,6 +16,19 @@ rssRoutes.get('/feeds', async (c) => {
   }
 });
 
+// GET /api/rss/feeds/all - Get all feeds (all users) - Task runner endpoint
+// Must be defined before /feeds/:id to avoid :id capturing "all"
+rssRoutes.get('/feeds/all', async (c) => {
+  try {
+    const service = new RssFeedService();
+    const feeds = await service.getAllFeeds();
+    return c.json({feeds});
+  } catch (error) {
+    console.error('Error fetching all feeds:', error);
+    return c.json({error: 'Failed to fetch feeds'}, 500);
+  }
+});
+
 // GET /api/rss/feeds/:id - Get single feed
 rssRoutes.get('/feeds/:id', async (c) => {
   try {
@@ -231,19 +244,8 @@ rssRoutes.post('/feeds/:id/import', async (c) => {
 
 // ============================================================================
 // Task runner endpoints (X-Task-Key auth)
+// Note: /feeds/all is defined earlier to avoid route conflicts with /feeds/:id
 // ============================================================================
-
-// GET /api/rss/feeds/all - Get all feeds (all users)
-rssRoutes.get('/feeds/all', async (c) => {
-  try {
-    const service = new RssFeedService();
-    const feeds = await service.getAllFeeds();
-    return c.json({feeds});
-  } catch (error) {
-    console.error('Error fetching all feeds:', error);
-    return c.json({error: 'Failed to fetch feeds'}, 500);
-  }
-});
 
 // POST /api/rss/feeds/:feedId/items - Batch import feed items
 rssRoutes.post('/feeds/:feedId/items', async (c) => {
