@@ -59,6 +59,8 @@
     <array/>
     <key>AppGroup</key>
     <string>group.com.stashl.links</string>
+    <key>AppGroupIdentifier</key>
+    <string>com.stashl.links</string>
     <key>NSExtension</key>
     <dict>
       <key>NSExtensionAttributes</key>

@@ -287,9 +287,39 @@ class ShareExtensionViewController: UIViewController {
                   if sharedItems["files"] == nil {
                     sharedItems["files"] = [String]()
                   }
-                  if var fileArray = sharedItems["files"] as? [String] {
-                    fileArray.append(sharedURL.absoluteString)
-                    sharedItems["files"] = fileArray
+                 guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
+                    print("Could not find AppGroup in info.plist")
+                    return
+                  }
+                  
+                  guard let containerUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
+                    print("Could not set up file manager container URL for app group")
+                    return
+                  }
+                  
+                  let tempFilePath = sharedURL.path
+                  let fileName = sharedURL.lastPathComponent
+                  
+                  let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
+                  
+                  if !fileManager.fileExists(atPath: sharedDataUrl.path) {
+                    do {
+                      try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
+                    } catch {
+                      print("Failed to create sharedData directory: \(error)")
+                    }
+                  }
+                  
+                  let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
+                  
+                  do {
+                    try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
+                    if var fileArray = sharedItems["files"] as? [String] {
+                      fileArray.append(persistentURL.path)
+                      sharedItems["files"] = fileArray
+                    }
+                  } catch {
+                    print("Failed to copy file: \(error)")
                   }
                 } else {
                   sharedItems["url"] = sharedURL.absoluteString
@@ -392,6 +422,31 @@ class ShareExtensionViewController: UIViewController {
                   } catch {
                     print("Failed to save image: \(error)")
                   }
+                }
+              } else if let image = imageItem as? Data {
+                print("📸 Handling Data type image")
+                let fileName = UUID().uuidString + ".jpg"
+                let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
+
+                if !fileManager.fileExists(atPath: sharedDataUrl.path) {
+                  do {
+                    try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
+                  } catch {
+                    print("Failed to create sharedData directory: \(error)")
+                  }
+                }
+
+                let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
+
+                do {
+                  try image.write(to: persistentURL)
+                  if var imageArray = sharedItems["images"] as? [String] {
+                    imageArray.append(persistentURL.path)
+                    sharedItems["images"] = imageArray
+                  }
+                  print("📸 Successfully saved Data type image to: \(persistentURL.path)")
+                } catch {
+                  print("Failed to save Data image: \(error)")
                 }
               } else {
                 print("imageItem is not a recognized type")

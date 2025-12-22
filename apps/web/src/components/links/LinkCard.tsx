@@ -5,6 +5,10 @@ interface LinkCardProps {
   onDelete: () => void;
 }
 
+function truncateUrl(url: string, maxLength = 75): string {
+  return url.length > maxLength ? url.slice(0, maxLength) + '...' : url;
+}
+
 export function LinkCard({link, onDelete}: LinkCardProps) {
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -21,7 +25,7 @@ export function LinkCard({link, onDelete}: LinkCardProps) {
   };
 
   return (
-    <div className='border border-amber-200 rounded-lg p-4 bg-amber-50 shadow-sm hover:shadow-md transition-all hover:border-amber-300 hover:bg-amber-100'>
+    <div className='border border-amber-200 rounded-lg p-4 bg-amber-50 shadow-sm hover:shadow-md transition-all hover:border-amber-300 hover:bg-amber-100 overflow-hidden'>
       <div className='flex items-start justify-between'>
         <div className='flex-1 min-w-0'>
           <div className='flex items-center space-x-2'>
@@ -35,7 +39,7 @@ export function LinkCard({link, onDelete}: LinkCardProps) {
             </a>
           </div>
 
-          <p className='text-sm text-teal-600 truncate mt-1'>{link.url}</p>
+          <p className='text-sm text-teal-600 truncate mt-1'>{truncateUrl(link.url)}</p>
           <p className='text-amber-900 mt-2 line-clamp-2'>{link.description}</p>
           <p className='text-xs text-amber-700 mt-3'>Added {formatDate(link.dateAdded)}</p>
         </div>

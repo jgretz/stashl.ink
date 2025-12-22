@@ -1,0 +1,99 @@
+import React, {useCallback} from 'react';
+import {FlatList, View, Text, StyleSheet, ActivityIndicator, RefreshControl} from 'react-native';
+import {useUnreadEmailItems} from '../../services';
+import {InboxItem} from './InboxItem';
+import {colors} from '../../theme';
+
+export function InboxView() {
+  const {data, isLoading, error, refetch, isRefetching, fetchNextPage, hasNextPage, isFetchingNextPage} =
+    useUnreadEmailItems(30);
+
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color={colors.linkAccent} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>Failed to load items</Text>
+      </View>
+    );
+  }
+
+  const items = data?.pages.flatMap((page) => page.items) || [];
+
+  if (items.length === 0) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.emptyText}>All caught up!</Text>
+        <Text style={styles.emptySubtext}>No unread email items</Text>
+      </View>
+    );
+  }
+
+  return (
+    <FlatList
+      data={items}
+      keyExtractor={(item) => item.id}
+      renderItem={({item}) => <InboxItem item={item} />}
+      contentContainerStyle={styles.listContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefetching}
+          onRefresh={refetch}
+          tintColor={colors.linkAccent}
+        />
+      }
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <View style={styles.footerLoader}>
+            <ActivityIndicator size="small" color={colors.linkAccent} />
+          </View>
+        ) : null
+      }
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  listContainer: {
+    padding: 16,
+    paddingBottom: 100,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.foreground,
+    marginBottom: 8,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: colors.mutedForeground,
+  },
+  errorText: {
+    fontSize: 16,
+    color: colors.destructive,
+  },
+  footerLoader: {
+    padding: 20,
+    alignItems: 'center',
+  },
+});

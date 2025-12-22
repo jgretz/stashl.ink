@@ -49,14 +49,18 @@
       "intentFilters": [
         {
           "action": "android.intent.action.SEND",
-          "category": ["android.intent.category.DEFAULT"],
+          "category": [
+            "android.intent.category.DEFAULT"
+          ],
           "data": {
             "mimeType": "text/plain"
           }
         },
         {
           "action": "android.intent.action.SEND",
-          "category": ["android.intent.category.DEFAULT"],
+          "category": [
+            "android.intent.category.DEFAULT"
+          ],
           "data": {
             "mimeType": "text/*"
           }
@@ -68,7 +72,31 @@
       "bundler": "metro"
     },
     "extra": {
-      "apiUrl": "https://stashl-api.fly.dev/api"
+      "apiUrl": "https://stashl-api.fly.dev/api",
+      "router": {
+        "root": "./src/app"
+      },
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "StashlinkShareExtension",
+                  "bundleIdentifier": "com.stashl.links.ShareExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.com.stashl.links"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "0d7c09ea-82ff-4479-87c1-5efe2f0834b5"
+      },
+      "appleApplicationGroup": "group.com.stashl.links"
     }
   }
 }

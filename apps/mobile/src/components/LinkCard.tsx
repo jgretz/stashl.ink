@@ -1,14 +1,16 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Alert, Linking} from 'react-native';
+import {Ionicons} from '@expo/vector-icons';
 import type {Link} from '../services';
 import {colors} from '../theme';
 
 interface LinkCardProps {
   link: Link;
   onDelete: () => void;
+  onEdit: () => void;
 }
 
-export function LinkCard({link, onDelete}: LinkCardProps) {
+export function LinkCard({link, onDelete, onEdit}: LinkCardProps) {
   const handlePress = async () => {
     try {
       const supported = await Linking.canOpenURL(link.url);
@@ -45,9 +47,14 @@ export function LinkCard({link, onDelete}: LinkCardProps) {
         </Text>
         <Text style={styles.date}>{new Date(link.dateAdded).toLocaleDateString()}</Text>
       </View>
-      <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-        <Text style={styles.deleteText}>✕</Text>
-      </TouchableOpacity>
+      <View style={styles.actions}>
+        <TouchableOpacity style={styles.actionButton} onPress={onEdit}>
+          <Ionicons name="pencil" size={18} color={colors.primary} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
+          <Ionicons name="trash-outline" size={18} color={colors.destructive} />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 }
@@ -93,13 +100,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.mutedForeground,
   },
-  deleteButton: {
-    padding: 8,
+  actions: {
+    flexDirection: 'column',
+    gap: 8,
     marginLeft: 8,
   },
-  deleteText: {
-    fontSize: 18,
-    color: colors.destructive,
-    fontWeight: 'bold',
+  actionButton: {
+    padding: 8,
   },
 });

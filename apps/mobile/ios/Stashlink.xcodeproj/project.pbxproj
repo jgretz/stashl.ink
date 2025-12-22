@@ -7,42 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05A4E4167A364C1897ED4315 /* StashlinkShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = BCE89EF6CB52499A98837F7A /* StashlinkShareExtension.appex */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		2EA3C53A53181E9BFF9034F0 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F9FA1C27D49483BD5ADC5 /* ExpoModulesProvider.swift */; };
+		26A4E53CFF55DC7D2CEDA5DC /* libPods-Stashlink.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B70625C71AEF65418A9431A /* libPods-Stashlink.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		4127695F5B7530F80CC1D3B7 /* libPods-StashlinkShareExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 20875CED73A7E0A02388D16E /* libPods-StashlinkShareExtension.a */; };
-		8C6CE3546CD8456DA1FE07BE /* ShareExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A4E816FDA345518FB2A6F5 /* ShareExtensionViewController.swift */; };
-		A0F6F905CE03D0972A976C45 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 36578A4E9C6E8BD3B36FDEE3 /* PrivacyInfo.xcprivacy */; };
+		62C3C9F4BBFA732A95B15C4B /* libPods-StashlinkShareExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2089F8796B7FE6EDBA7026 /* libPods-StashlinkShareExtension.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		BC142EC97FB0DC56B44E515C /* libPods-Stashlink.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 484DC77A6EFC1549CD1187F3 /* libPods-Stashlink.a */; };
-		D465D0C676534F6C9D467618 /* StashlinkShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = CAE43992F2FA466B95A32181 /* StashlinkShareExtension.appex */; };
-		D7B2558E53643E1F034E3EBE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF55ACAB56041954D6D3792 /* ExpoModulesProvider.swift */; };
+		CAA4AD2D7A67A676D4298DC9 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6D5BDA7F42E7A88D31388E /* ExpoModulesProvider.swift */; };
+		E192772A95AA417CBA1DAFA6 /* ShareExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D00FFDC4B64F2E894475A4 /* ShareExtensionViewController.swift */; };
+		ECDB3FA3EAFB9576B6065A99 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AF54091D23ED68F66A509E2C /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		F72329575C61E121393B4FF6 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 700C06EBA22A27B720CE742C /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		200E4A1403164C99AC0D50FB /* PBXContainerItemProxy */ = {
+		0301330621A6421A8C7DE153 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = CBECBDDD87E34A9BB40E9CF9;
+			remoteGlobalIDString = 4BA134BAE71C407DBF047AA0;
 			remoteInfo = StashlinkShareExtension;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		DDC76B3B53574EE5B10C9474 /* Copy Files */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				D465D0C676534F6C9D467618 /* StashlinkShareExtension.appex in Copy Files */,
-			);
-			name = "Copy Files";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E20D7DA8ED254A80A320AD99 /* Embed Foundation Extensions */ = {
+		79E066B7F92B464381BA009E /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -52,30 +41,41 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BCA67D984E414423B86FD3FF /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				05A4E4167A364C1897ED4315 /* StashlinkShareExtension.appex in Copy Files */,
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		03784D30054D65C3C6AE12E5 /* Pods-StashlinkShareExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StashlinkShareExtension.release.xcconfig"; path = "Target Support Files/Pods-StashlinkShareExtension/Pods-StashlinkShareExtension.release.xcconfig"; sourceTree = "<group>"; };
+		11D00FFDC4B64F2E894475A4 /* ShareExtensionViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = ShareExtensionViewController.swift; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Stashlink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stashlink.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Stashlink/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Stashlink/Info.plist; sourceTree = "<group>"; };
-		20875CED73A7E0A02388D16E /* libPods-StashlinkShareExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-StashlinkShareExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		36578A4E9C6E8BD3B36FDEE3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Stashlink/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		484DC77A6EFC1549CD1187F3 /* libPods-Stashlink.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Stashlink.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4D4F9FA1C27D49483BD5ADC5 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-StashlinkShareExtension/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		72A4E816FDA345518FB2A6F5 /* ShareExtensionViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareExtensionViewController.swift; path = ShareExtensionViewController.swift; sourceTree = "<group>"; };
-		7CE000EDE6E24BB5BDD1A6F6 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
-		8EF55ACAB56041954D6D3792 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Stashlink/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		2B70625C71AEF65418A9431A /* libPods-Stashlink.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Stashlink.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		38B6278F7CEB1CBA3A97AA24 /* Pods-Stashlink.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stashlink.debug.xcconfig"; path = "Target Support Files/Pods-Stashlink/Pods-Stashlink.debug.xcconfig"; sourceTree = "<group>"; };
+		539F3124CFE744AAAE9C06B1 /* StashlinkShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = StashlinkShareExtension.entitlements; sourceTree = "<group>"; };
+		54A9EB5750583A4977735A7A /* Pods-Stashlink.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stashlink.release.xcconfig"; path = "Target Support Files/Pods-Stashlink/Pods-Stashlink.release.xcconfig"; sourceTree = "<group>"; };
+		64E80F6F6319D502A9DF8A71 /* Pods-StashlinkShareExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StashlinkShareExtension.debug.xcconfig"; path = "Target Support Files/Pods-StashlinkShareExtension/Pods-StashlinkShareExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		700C06EBA22A27B720CE742C /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-StashlinkShareExtension/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		718A9887FB9F4C5EACD68189 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Stashlink/SplashScreen.storyboard; sourceTree = "<group>"; };
+		AF54091D23ED68F66A509E2C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Stashlink/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C5DADC59BBFDAFDD35B9797F /* Pods-Stashlink.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stashlink.debug.xcconfig"; path = "Target Support Files/Pods-Stashlink/Pods-Stashlink.debug.xcconfig"; sourceTree = "<group>"; };
-		CAE43992F2FA466B95A32181 /* StashlinkShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = StashlinkShareExtension.appex; path = StashlinkShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		CEC979DD2CBF8F11398A77B1 /* Pods-StashlinkShareExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StashlinkShareExtension.debug.xcconfig"; path = "Target Support Files/Pods-StashlinkShareExtension/Pods-StashlinkShareExtension.debug.xcconfig"; sourceTree = "<group>"; };
-		E4FCF8B4BBAF84D4079975DF /* Pods-Stashlink.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stashlink.release.xcconfig"; path = "Target Support Files/Pods-Stashlink/Pods-Stashlink.release.xcconfig"; sourceTree = "<group>"; };
+		BCE89EF6CB52499A98837F7A /* StashlinkShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 9; includeInIndex = 0; path = StashlinkShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C160772DA40CDDDDF9D06EE3 /* Pods-StashlinkShareExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StashlinkShareExtension.release.xcconfig"; path = "Target Support Files/Pods-StashlinkShareExtension/Pods-StashlinkShareExtension.release.xcconfig"; sourceTree = "<group>"; };
+		DB2089F8796B7FE6EDBA7026 /* libPods-StashlinkShareExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-StashlinkShareExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC6D5BDA7F42E7A88D31388E /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Stashlink/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Stashlink/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Stashlink-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Stashlink-Bridging-Header.h"; path = "Stashlink/Stashlink-Bridging-Header.h"; sourceTree = "<group>"; };
-		FC86D91CD48343EB822F2194 /* StashlinkShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = StashlinkShareExtension.entitlements; path = StashlinkShareExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,15 +83,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC142EC97FB0DC56B44E515C /* libPods-Stashlink.a in Frameworks */,
+				26A4E53CFF55DC7D2CEDA5DC /* libPods-Stashlink.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1ECD116A2DC0470A943ED7F9 /* Frameworks */ = {
+		C793A03AB57B4DC79F1CE842 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4127695F5B7530F80CC1D3B7 /* libPods-StashlinkShareExtension.a in Frameworks */,
+				62C3C9F4BBFA732A95B15C4B /* libPods-StashlinkShareExtension.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,59 +107,46 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				36578A4E9C6E8BD3B36FDEE3 /* PrivacyInfo.xcprivacy */,
+				AF54091D23ED68F66A509E2C /* PrivacyInfo.xcprivacy */,
 			);
 			name = Stashlink;
-			sourceTree = "<group>";
-		};
-		140A1B7A0F284B8A968C9935 /* StashlinkShareExtension */ = {
-			isa = PBXGroup;
-			children = (
-				72A4E816FDA345518FB2A6F5 /* ShareExtensionViewController.swift */,
-				7CE000EDE6E24BB5BDD1A6F6 /* Info.plist */,
-				FC86D91CD48343EB822F2194 /* StashlinkShareExtension.entitlements */,
-			);
-			name = StashlinkShareExtension;
-			path = StashlinkShareExtension;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				484DC77A6EFC1549CD1187F3 /* libPods-Stashlink.a */,
-				20875CED73A7E0A02388D16E /* libPods-StashlinkShareExtension.a */,
+				2B70625C71AEF65418A9431A /* libPods-Stashlink.a */,
+				DB2089F8796B7FE6EDBA7026 /* libPods-StashlinkShareExtension.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		3629CF071BC4D3E958439181 /* Stashlink */ = {
+		373D52BABCF145A780E24DB8 /* StashlinkShareExtension */ = {
 			isa = PBXGroup;
 			children = (
-				8EF55ACAB56041954D6D3792 /* ExpoModulesProvider.swift */,
+				11D00FFDC4B64F2E894475A4 /* ShareExtensionViewController.swift */,
+				718A9887FB9F4C5EACD68189 /* Info.plist */,
+				539F3124CFE744AAAE9C06B1 /* StashlinkShareExtension.entitlements */,
 			);
-			name = Stashlink;
+			path = StashlinkShareExtension;
 			sourceTree = "<group>";
 		};
-		5CCEF04A87D203704908E49E /* Pods */ = {
+		5D132B293967ACB1A915CD8B /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				C5DADC59BBFDAFDD35B9797F /* Pods-Stashlink.debug.xcconfig */,
-				E4FCF8B4BBAF84D4079975DF /* Pods-Stashlink.release.xcconfig */,
-				CEC979DD2CBF8F11398A77B1 /* Pods-StashlinkShareExtension.debug.xcconfig */,
-				03784D30054D65C3C6AE12E5 /* Pods-StashlinkShareExtension.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		634FBEB8051513ED192FB3F8 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				3629CF071BC4D3E958439181 /* Stashlink */,
-				D30E981AF1857180DFEACE46 /* StashlinkShareExtension */,
+				D1409721DD4EF0E863562ABA /* Stashlink */,
+				7459D09B754E98CCE64E9E2F /* StashlinkShareExtension */,
 			);
 			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		7459D09B754E98CCE64E9E2F /* StashlinkShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				700C06EBA22A27B720CE742C /* ExpoModulesProvider.swift */,
+			);
+			name = StashlinkShareExtension;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -176,9 +163,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				140A1B7A0F284B8A968C9935 /* StashlinkShareExtension */,
-				5CCEF04A87D203704908E49E /* Pods */,
-				634FBEB8051513ED192FB3F8 /* ExpoModulesProviders */,
+				373D52BABCF145A780E24DB8 /* StashlinkShareExtension */,
+				DDAF6CFBDD87EE2A574E12AB /* Pods */,
+				5D132B293967ACB1A915CD8B /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -189,7 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* Stashlink.app */,
-				CAE43992F2FA466B95A32181 /* StashlinkShareExtension.appex */,
+				BCE89EF6CB52499A98837F7A /* StashlinkShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -203,12 +190,23 @@
 			path = Stashlink/Supporting;
 			sourceTree = "<group>";
 		};
-		D30E981AF1857180DFEACE46 /* StashlinkShareExtension */ = {
+		D1409721DD4EF0E863562ABA /* Stashlink */ = {
 			isa = PBXGroup;
 			children = (
-				4D4F9FA1C27D49483BD5ADC5 /* ExpoModulesProvider.swift */,
+				EC6D5BDA7F42E7A88D31388E /* ExpoModulesProvider.swift */,
 			);
-			name = StashlinkShareExtension;
+			name = Stashlink;
+			sourceTree = "<group>";
+		};
+		DDAF6CFBDD87EE2A574E12AB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				38B6278F7CEB1CBA3A97AA24 /* Pods-Stashlink.debug.xcconfig */,
+				54A9EB5750583A4977735A7A /* Pods-Stashlink.release.xcconfig */,
+				64E80F6F6319D502A9DF8A71 /* Pods-StashlinkShareExtension.debug.xcconfig */,
+				C160772DA40CDDDDF9D06EE3 /* Pods-StashlinkShareExtension.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,38 +217,38 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Stashlink" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				E5F409F02238DF7863BB1EAD /* [Expo] Configure project */,
+				DBEBCD6A18AA3AF0D8E8DA4D /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				E20D7DA8ED254A80A320AD99 /* Embed Foundation Extensions */,
-				DDC76B3B53574EE5B10C9474 /* Copy Files */,
-				BA9526126BC18FE76E8D0383 /* [CP] Embed Pods Frameworks */,
+				79E066B7F92B464381BA009E /* Embed Foundation Extensions */,
+				BCA67D984E414423B86FD3FF /* Copy Files */,
+				9F42AD4A5FC047AE7B855954 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				FB25568E108D48BDB1A7B90A /* PBXTargetDependency */,
+				BD74DDC34A9440C4A04EB912 /* PBXTargetDependency */,
 			);
 			name = Stashlink;
 			productName = Stashlink;
 			productReference = 13B07F961A680F5B00A75B9A /* Stashlink.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CBECBDDD87E34A9BB40E9CF9 /* StashlinkShareExtension */ = {
+		4BA134BAE71C407DBF047AA0 /* StashlinkShareExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C38B2C66F62A4F0EBB0AC010 /* Build configuration list for PBXNativeTarget "StashlinkShareExtension" */;
+			buildConfigurationList = 64175D8EC858497988FCE20D /* Build configuration list for PBXNativeTarget "StashlinkShareExtension" */;
 			buildPhases = (
-				21AA2A83E3E5A59DC15AD298 /* [CP] Check Pods Manifest.lock */,
-				710E405B06114D8690636840 /* Start Packager */,
-				C9E2B2099203E740B5EAFE97 /* [Expo] Configure project */,
-				43E6903E11D540558DF9C257 /* Sources */,
-				1ECD116A2DC0470A943ED7F9 /* Frameworks */,
-				EE7D7D9FF8D94354A7493BF9 /* Resources */,
-				18E6A394B44544488D778DB1 /* Bundle React Native code and images */,
-				528767999E6B8722C9B63B71 /* [CP] Copy Pods Resources */,
+				FFD10247EB311CEEF132732C /* [CP] Check Pods Manifest.lock */,
+				F0C4686953B74469B7D84FA7 /* Start Packager */,
+				3B1DFCE5D9C06373A5DDD747 /* [Expo] Configure project */,
+				234EDCC7D80A47D39C63C9FB /* Sources */,
+				C793A03AB57B4DC79F1CE842 /* Frameworks */,
+				11ED1C8979174F0E9E83FBA8 /* Resources */,
+				FAAB6424D2534143A6FBA5C6 /* Bundle React Native code and images */,
+				417BA405E54AE007F473D2D1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -258,7 +256,7 @@
 			);
 			name = StashlinkShareExtension;
 			productName = StashlinkShareExtension;
-			productReference = CAE43992F2FA466B95A32181 /* StashlinkShareExtension.appex */;
+			productReference = BCE89EF6CB52499A98837F7A /* StashlinkShareExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -272,7 +270,7 @@
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
 					};
-					CBECBDDD87E34A9BB40E9CF9 = {
+					4BA134BAE71C407DBF047AA0 = {
 						LastSwiftMigration = 1250;
 					};
 				};
@@ -291,12 +289,19 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* Stashlink */,
-				CBECBDDD87E34A9BB40E9CF9 /* StashlinkShareExtension */,
+				4BA134BAE71C407DBF047AA0 /* StashlinkShareExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		11ED1C8979174F0E9E83FBA8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -304,14 +309,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				A0F6F905CE03D0972A976C45 /* PrivacyInfo.xcprivacy in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EE7D7D9FF8D94354A7493BF9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				ECDB3FA3EAFB9576B6065A99 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,43 +353,26 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		18E6A394B44544488D778DB1 /* Bundle React Native code and images */ = {
+		3B1DFCE5D9C06373A5DDD747 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Bundle React Native code and images";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n  NODE_BINARY=${NODE_BINARY:-node}\n  \n  # Source environment files\n  if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n    source \"$PODS_ROOT/../.xcode.env\"\n  fi\n  if [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n    source \"$PODS_ROOT/../.xcode.env.local\"\n  fi\n  \n  # Set project root\n  export PROJECT_ROOT=\"$PROJECT_DIR\"/..\n  \n  # Set entry file\n  export ENTRY_FILE=\"$PROJECT_ROOT/index.share.js\"\n  \n  # Set up Expo CLI\n  if [[ -z \"$CLI_PATH\" ]]; then\n    export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\n  fi\n  \n  if [[ -z \"$BUNDLE_COMMAND\" ]]; then\n    export BUNDLE_COMMAND=\"export:embed\"\n  fi\n  \n  REACT_NATIVE_SCRIPTS_PATH=$(\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts'\")\n  WITH_ENVIRONMENT=\"$REACT_NATIVE_SCRIPTS_PATH/xcode/with-environment.sh\"\n  REACT_NATIVE_XCODE=\"$REACT_NATIVE_SCRIPTS_PATH/react-native-xcode.sh\"\n  \n  /bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"";
-		};
-		21AA2A83E3E5A59DC15AD298 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
 			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-StashlinkShareExtension-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-StashlinkShareExtension/expo-configure-project.sh\"\n";
 		};
-		528767999E6B8722C9B63B71 /* [CP] Copy Pods Resources */ = {
+		417BA405E54AE007F473D2D1 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -422,20 +403,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-StashlinkShareExtension/Pods-StashlinkShareExtension-resources.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		710E405B06114D8690636840 /* Start Packager */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Start Packager";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -469,7 +436,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Stashlink/Pods-Stashlink-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BA9526126BC18FE76E8D0383 /* [CP] Embed Pods Frameworks */ = {
+		9F42AD4A5FC047AE7B855954 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -487,26 +454,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Stashlink/Pods-Stashlink-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C9E2B2099203E740B5EAFE97 /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-StashlinkShareExtension/expo-configure-project.sh\"\n";
-		};
-		E5F409F02238DF7863BB1EAD /* [Expo] Configure project */ = {
+		DBEBCD6A18AA3AF0D8E8DA4D /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -525,6 +473,56 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Stashlink/expo-configure-project.sh\"\n";
 		};
+		F0C4686953B74469B7D84FA7 /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+		};
+		FAAB6424D2534143A6FBA5C6 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n  NODE_BINARY=${NODE_BINARY:-node}\n  \n  # Source environment files\n  if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n    source \"$PODS_ROOT/../.xcode.env\"\n  fi\n  if [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n    source \"$PODS_ROOT/../.xcode.env.local\"\n  fi\n  \n  # Set project root\n  export PROJECT_ROOT=\"$PROJECT_DIR\"/..\n  \n  # Set entry file\n  export ENTRY_FILE=\"$PROJECT_ROOT/index.share.js\"\n  \n  # Set up Expo CLI\n  if [[ -z \"$CLI_PATH\" ]]; then\n    export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\n  fi\n  \n  if [[ -z \"$BUNDLE_COMMAND\" ]]; then\n    export BUNDLE_COMMAND=\"export:embed\"\n  fi\n  \n  REACT_NATIVE_SCRIPTS_PATH=$(\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts'\")\n  WITH_ENVIRONMENT=\"$REACT_NATIVE_SCRIPTS_PATH/xcode/with-environment.sh\"\n  REACT_NATIVE_XCODE=\"$REACT_NATIVE_SCRIPTS_PATH/react-native-xcode.sh\"\n  \n  /bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"";
+		};
+		FFD10247EB311CEEF132732C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-StashlinkShareExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -533,38 +531,39 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				D7B2558E53643E1F034E3EBE /* ExpoModulesProvider.swift in Sources */,
+				CAA4AD2D7A67A676D4298DC9 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		43E6903E11D540558DF9C257 /* Sources */ = {
+		234EDCC7D80A47D39C63C9FB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8C6CE3546CD8456DA1FE07BE /* ShareExtensionViewController.swift in Sources */,
-				2EA3C53A53181E9BFF9034F0 /* ExpoModulesProvider.swift in Sources */,
+				E192772A95AA417CBA1DAFA6 /* ShareExtensionViewController.swift in Sources */,
+				F72329575C61E121393B4FF6 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		FB25568E108D48BDB1A7B90A /* PBXTargetDependency */ = {
+		BD74DDC34A9440C4A04EB912 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CBECBDDD87E34A9BB40E9CF9 /* StashlinkShareExtension */;
-			targetProxy = 200E4A1403164C99AC0D50FB /* PBXContainerItemProxy */;
+			target = 4BA134BAE71C407DBF047AA0 /* StashlinkShareExtension */;
+			targetProxy = 0301330621A6421A8C7DE153 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C5DADC59BBFDAFDD35B9797F /* Pods-Stashlink.debug.xcconfig */;
+			baseConfigurationReference = 38B6278F7CEB1CBA3A97AA24 /* Pods-Stashlink.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Stashlink/Stashlink.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B8L5W4A275;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -595,12 +594,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E4FCF8B4BBAF84D4079975DF /* Pods-Stashlink.release.xcconfig */;
+			baseConfigurationReference = 54A9EB5750583A4977735A7A /* Pods-Stashlink.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Stashlink/Stashlink.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B8L5W4A275;
 				INFOPLIST_FILE = Stashlink/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -623,13 +623,14 @@
 			};
 			name = Release;
 		};
-		1F3CECB7AB4C4A7EB3D0A34E /* Release */ = {
+		34D0B392F5634664AC76F51C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 03784D30054D65C3C6AE12E5 /* Pods-StashlinkShareExtension.release.xcconfig */;
+			baseConfigurationReference = C160772DA40CDDDDF9D06EE3 /* Pods-StashlinkShareExtension.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = StashlinkShareExtension/StashlinkShareExtension.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B8L5W4A275;
 				ENABLE_ON_DEMAND_RESOURCES = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StashlinkShareExtension/Info.plist;
@@ -647,32 +648,6 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
-		};
-		3A2FA9B1DE2C4B01B609601B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CEC979DD2CBF8F11398A77B1 /* Pods-StashlinkShareExtension.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = StashlinkShareExtension/StashlinkShareExtension.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_ON_DEMAND_RESOURCES = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = StashlinkShareExtension/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0.0;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.stashl.links.ShareExtension;
-				PRODUCT_NAME = StashlinkShareExtension;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 5.0;
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Debug;
 		};
 		83CBBA201A601CBA00E9B192 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -729,11 +704,8 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/react-native";
+				OTHER_LDFLAGS = "$(inherited)  ";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.bun/react-native@0.79.6+b968706bc868e450/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				USE_HERMES = true;
@@ -787,16 +759,40 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/react-native";
+				OTHER_LDFLAGS = "$(inherited)  ";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.bun/react-native@0.79.6+b968706bc868e450/node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+		};
+		F6D67080FDBE4CB7B388B9A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64E80F6F6319D502A9DF8A71 /* Pods-StashlinkShareExtension.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = StashlinkShareExtension/StashlinkShareExtension.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = B8L5W4A275;
+				ENABLE_ON_DEMAND_RESOURCES = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StashlinkShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.stashl.links.ShareExtension;
+				PRODUCT_NAME = StashlinkShareExtension;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
@@ -810,20 +806,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		64175D8EC858497988FCE20D /* Build configuration list for PBXNativeTarget "StashlinkShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6D67080FDBE4CB7B388B9A9 /* Debug */,
+				34D0B392F5634664AC76F51C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Stashlink" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C38B2C66F62A4F0EBB0AC010 /* Build configuration list for PBXNativeTarget "StashlinkShareExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3A2FA9B1DE2C4B01B609601B /* Debug */,
-				1F3CECB7AB4C4A7EB3D0A34E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

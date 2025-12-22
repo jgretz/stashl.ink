@@ -4,6 +4,8 @@
   <dict>
     <key>AppGroup</key>
     <string>group.com.stashl.links</string>
+    <key>AppGroupIdentifier</key>
+    <string>com.stashl.links</string>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>

@@ -10,5 +10,11 @@ export * from './users';
 // Link Services
 export * from './links';
 
+// Feed Services
+export * from './feeds';
+
+// Email Services
+export * from './email';
+
 // Share Handler
 export * from './share-handler';

@@ -42,7 +42,7 @@ function List() {
           <AddLinkForm />
         </div>
 
-        <div className='flex-1'>
+        <div className='flex-1 overflow-auto'>
           <LinkList />
         </div>
       </div>

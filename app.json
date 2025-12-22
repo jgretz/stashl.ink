@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "fd20bf2e-6872-4e82-925d-26646dd2bdc8"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.stashl.links",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
+  }
+}

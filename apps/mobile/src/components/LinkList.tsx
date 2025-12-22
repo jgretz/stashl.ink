@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {FlatList, View, Text, StyleSheet, ActivityIndicator, RefreshControl} from 'react-native';
 import {useLinks, useDeleteLink, type Link} from '../services';
 import {LinkCard} from './LinkCard';
+import {EditLinkForm} from './links';
 import {colors} from '../theme';
 
 function LoadingState() {
@@ -64,17 +65,18 @@ function EmptyState({isRefreshing, onRefresh}: {isRefreshing: boolean; onRefresh
 interface LinksListProps {
   links: Link[];
   onDelete: (linkId: string) => void;
+  onEdit: (link: Link) => void;
   isRefreshing: boolean;
   onRefresh: () => void;
 }
 
-function LinksList({links, onDelete, isRefreshing, onRefresh}: LinksListProps) {
+function LinksList({links, onDelete, onEdit, isRefreshing, onRefresh}: LinksListProps) {
   return (
     <FlatList
       data={links}
       keyExtractor={(item) => item.id}
       renderItem={({item}) => (
-        <LinkCard link={item} onDelete={() => onDelete(item.id)} />
+        <LinkCard link={item} onDelete={() => onDelete(item.id)} onEdit={() => onEdit(item)} />
       )}
       style={styles.list}
       showsVerticalScrollIndicator={false}
@@ -94,9 +96,18 @@ function LinksList({links, onDelete, isRefreshing, onRefresh}: LinksListProps) {
 export function LinkList() {
   const {data, isLoading, error, refetch, isFetching} = useLinks();
   const deleteLinkMutation = useDeleteLink();
+  const [editingLink, setEditingLink] = useState<Link | null>(null);
 
   const handleDelete = (linkId: string) => {
     deleteLinkMutation.mutate(linkId);
+  };
+
+  const handleEdit = (link: Link) => {
+    setEditingLink(link);
+  };
+
+  const handleCloseEdit = () => {
+    setEditingLink(null);
   };
 
   const handleRefresh = () => {
@@ -109,9 +120,9 @@ export function LinkList() {
 
   if (error) {
     return (
-      <ErrorState 
-        isRefreshing={isFetching} 
-        onRefresh={handleRefresh} 
+      <ErrorState
+        isRefreshing={isFetching}
+        onRefresh={handleRefresh}
         error={error.message || 'Unknown error'}
       />
     );
@@ -124,12 +135,16 @@ export function LinkList() {
   }
 
   return (
-    <LinksList
-      links={links}
-      onDelete={handleDelete}
-      isRefreshing={isFetching}
-      onRefresh={handleRefresh}
-    />
+    <>
+      <LinksList
+        links={links}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        isRefreshing={isFetching}
+        onRefresh={handleRefresh}
+      />
+      <EditLinkForm visible={!!editingLink} link={editingLink} onClose={handleCloseEdit} />
+    </>
   );
 }
 
