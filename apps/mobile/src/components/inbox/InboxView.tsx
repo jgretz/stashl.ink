@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {FlatList, View, Text, StyleSheet, ActivityIndicator, RefreshControl} from 'react-native';
+import {FlatList, View, Text, StyleSheet, ActivityIndicator, RefreshControl, ScrollView} from 'react-native';
 import {useUnreadEmailItems} from '../../services';
 import {InboxItem} from './InboxItem';
 import {colors} from '../../theme';
@@ -34,10 +34,19 @@ export function InboxView() {
 
   if (items.length === 0) {
     return (
-      <View style={styles.centerContainer}>
+      <ScrollView
+        contentContainerStyle={styles.centerContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            tintColor={colors.linkAccent}
+          />
+        }
+      >
         <Text style={styles.emptyText}>All caught up!</Text>
         <Text style={styles.emptySubtext}>No unread email items</Text>
-      </View>
+      </ScrollView>
     );
   }
 

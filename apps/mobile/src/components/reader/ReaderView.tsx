@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {FlatList, View, Text, StyleSheet, ActivityIndicator, RefreshControl} from 'react-native';
+import {FlatList, View, Text, StyleSheet, ActivityIndicator, RefreshControl, ScrollView} from 'react-native';
 import {useUnreadItems} from '../../services';
 import {ReaderItem} from './ReaderItem';
 import {colors} from '../../theme';
@@ -34,10 +34,19 @@ export function ReaderView() {
 
   if (items.length === 0) {
     return (
-      <View style={styles.centerContainer}>
+      <ScrollView
+        contentContainerStyle={styles.centerContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            tintColor={colors.linkAccent}
+          />
+        }
+      >
         <Text style={styles.emptyText}>All caught up!</Text>
         <Text style={styles.emptySubtext}>No unread items</Text>
-      </View>
+      </ScrollView>
     );
   }
 
