@@ -9,6 +9,8 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {useAuth} from '../contexts/AuthContext';
 import {colors} from '../theme';
@@ -37,7 +39,10 @@ export function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <KeyboardAvoidingView
+        style={styles.content}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <View style={styles.header}>
           <View style={styles.titleContainer}>
             <Image 
@@ -91,7 +96,7 @@ export function LoginScreen() {
             )}
           </TouchableOpacity>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
