@@ -11,12 +11,17 @@ import {
 import {Ionicons} from '@expo/vector-icons';
 import * as Burnt from 'burnt';
 import {ReaderView} from '../../components/reader';
-import {useTriggerImportAll, useMarkAllRead} from '../../services';
+import {useTriggerImportAll, useMarkAllRead, useUnreadItems} from '../../services';
 import {colors} from '../../theme';
 
 export default function ReaderTab() {
   const importAllMutation = useTriggerImportAll();
   const markAllReadMutation = useMarkAllRead();
+  const {data, hasNextPage} = useUnreadItems(30);
+
+  const items = data?.pages.flatMap((page) => page.items) || [];
+  const itemCount = items.length;
+  const countDisplay = hasNextPage ? `${itemCount}+` : `${itemCount}`;
 
   const handleRefreshAll = () => {
     importAllMutation.mutate(undefined, {
@@ -51,7 +56,7 @@ export default function ReaderTab() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>RSS Reader</Text>
+        <Text style={styles.headerTitle}>RSS Reader {itemCount > 0 ? `(${countDisplay})` : '✨'}</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
             onPress={handleMarkAllRead}

@@ -3,14 +3,17 @@ import {StyleSheet, View, Text, TouchableOpacity, SafeAreaView, Image} from 'rea
 import {useLocalSearchParams} from 'expo-router';
 import {LinkList, AddLinkForm, SharedLinkProcessor} from '../../components';
 import {colors} from '../../theme';
-import {shareHandler, type SharedLinkData} from '../../services';
+import {shareHandler, type SharedLinkData, useLinks} from '../../services';
 
 export default function LinksTab() {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [sharedLinkData, setSharedLinkData] = useState<SharedLinkData | null>(null);
   const [isSharedLinkVisible, setIsSharedLinkVisible] = useState(false);
+  const {data: linksData} = useLinks();
 
   const {url, text} = useLocalSearchParams<{url?: string; text?: string}>();
+
+  const linkCount = linksData?.links.length ?? 0;
 
   useEffect(() => {
     shareHandler.initialize();
@@ -49,7 +52,7 @@ export default function LinksTab() {
             style={styles.headerLogo}
             resizeMode="contain"
           />
-          <Text style={styles.headerTitle}>Links</Text>
+          <Text style={styles.headerTitle}>Links {linkCount > 0 ? `(${linkCount})` : '✨'}</Text>
         </View>
         <TouchableOpacity style={styles.addButton} onPress={() => setIsFormVisible(true)}>
           <Text style={styles.addButtonText}>+ Add</Text>

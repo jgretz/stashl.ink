@@ -3,13 +3,18 @@ import {StyleSheet, View, Text, SafeAreaView, TouchableOpacity, ActivityIndicato
 import {Ionicons} from '@expo/vector-icons';
 import * as Burnt from 'burnt';
 import {InboxView} from '../../components/inbox';
-import {useTriggerEmailRefresh, useMarkAllEmailItemsRead, useEmailSettings} from '../../services';
+import {useTriggerEmailRefresh, useMarkAllEmailItemsRead, useEmailSettings, useUnreadEmailItems} from '../../services';
 import {colors} from '../../theme';
 
 export default function InboxTab() {
   const {data: settings} = useEmailSettings();
   const refreshMutation = useTriggerEmailRefresh();
   const markAllReadMutation = useMarkAllEmailItemsRead();
+  const {data, hasNextPage} = useUnreadEmailItems(30);
+
+  const items = data?.pages.flatMap((page) => page.items) || [];
+  const itemCount = items.length;
+  const countDisplay = hasNextPage ? `${itemCount}+` : `${itemCount}`;
 
   const handleRefresh = () => {
     refreshMutation.mutate(undefined, {
@@ -46,7 +51,7 @@ export default function InboxTab() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Inbox</Text>
+        <Text style={styles.headerTitle}>Inbox {itemCount > 0 ? `(${countDisplay})` : '✨'}</Text>
         {isConnected && (
           <View style={styles.headerActions}>
             <TouchableOpacity
